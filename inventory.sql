@@ -65,8 +65,8 @@ VALUES (1, 20, 1), -- Every drink needs a cup
        (29, 11, 3),
        (30, 7, 3),
        (31, 6, 3),
-       (32, 5, 4), -- Rest of ingredients for Mango Green Milk Tea
-       (33, 11, 4),
+       (32, 15, 4), -- Rest of ingredients for Mango Green Milk Tea
+       (33, 2, 4),
        (34, 16, 4),
        (35, 14, 4),
        (36, 10, 5), -- Rest of ingredients for Oreo Ice Blended w Pearls

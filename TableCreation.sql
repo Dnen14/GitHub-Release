@@ -4,7 +4,6 @@ CREATE Table Ingredient(
     _name text,
     restock_price float,
     PRIMARY KEY(ID),
-    FOREIGN KEY(Menu_item) REFERENCES IngredientMenuItemJoinTable(ID)
 );
 
 CREATE Table Ingredient_Menu_Item_Join_Table(
@@ -21,11 +20,7 @@ CREATE Table Menu_Item(
     _size int,
     price float,
     _name text,
-    Order_ID int,
-    Ingredient int,
     PRIMARY KEY(ID),
-    FOREIGN KEY(Order_ID) REFERENCES MenuItemOrderJoinTable(ID),
-    FOREIGN KEY(Ingredient) REFERENCES IngredientMenuItemJoinTable(ID)
 );
 
 

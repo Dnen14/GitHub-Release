@@ -2,13 +2,13 @@ CREATE Table Ingredient(
     ID int NOT NULL,
     quantity int,
     Menu_item int,
-    name text,
+    _name text,
     restock_price float,
     PRIMARY KEY(ID),
     FOREIGN KEY(Menu_item) REFERENCES IngredientMenuItemJoinTable(ID)
 );
 
-CREATE Table IngredientMenuItemJoinTable(
+CREATE Table Ingredient_Menu_Item_Join_Table(
     ID int NOT NULL,
     Ingredient_ID int,
     Menu_Item_ID int,
@@ -21,7 +21,7 @@ CREATE Table Menu_Item(
     ID int NOT NULL,
     _size int,
     price float,
-    name text,
+    _name text,
     Order_ID int,
     Ingredient int,
     PRIMARY KEY(ID),
@@ -30,7 +30,7 @@ CREATE Table Menu_Item(
 );
 
 
-CREATE Table MenuItemOrderJoinTable(
+CREATE Table Menu_Item_Order_Join_Table(
     ID int NOT NULL,
     MenuItemID int,
     Orderid int,
@@ -39,7 +39,7 @@ CREATE Table MenuItemOrderJoinTable(
     FOREIGN KEY(Orderid) REFERENCES Order(ID)
 );
 
-CREATE Table OrderTable(
+CREATE Table Order_Table(
     ID int NOT NULL,
     MenuItems text,
     TotalPrice float,
@@ -59,7 +59,7 @@ CREATE Table Customer(
     FOREIGN KEY(Orders) REFERENCES CustomerOrderJoinTable(ID)
 );
 
-CREATE Table CustomerOrderJoinTable(
+CREATE Table Customer_Order_Join_Table(
     ID int,
     OrderId int,
     CustomerID int,

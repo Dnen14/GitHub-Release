@@ -1,7 +1,6 @@
 CREATE Table Ingredient(
     ID int NOT NULL,
     quantity int,
-    Menu_item int,
     _name text,
     restock_price float,
     PRIMARY KEY(ID),

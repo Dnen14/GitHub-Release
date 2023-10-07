@@ -30,7 +30,7 @@ CREATE Table Menu_Item_Order_Join_Table(
     Orderid int,
     PRIMARY KEY(ID),
     FOREIGN KEY(MenuItemID) REFERENCES Menu_Item(ID),
-    FOREIGN KEY(Orderid) REFERENCES Order(ID)
+    FOREIGN KEY(Orderid) REFERENCES Order_Table(ID)
 );
 
 CREATE Table Order_Table(

@@ -8,6 +8,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 public class Manager_GUI extends JFrame {
+    public static Object[][] inventory;
     public static void main(String[] args)
     {
         //Building the connection
@@ -25,27 +26,34 @@ public class Manager_GUI extends JFrame {
         // }
         // JOptionPane.showMessageDialog(null,"Opened database successfully");
 
+        inventory = new Object[0][0];
+        String[] columnNames = new String[0];
+        SQLCalls database = new SQLCalls();
+        String[] menuItems = new String[0];
+        String[] ingredients = new String[0];
         try {
-            // TODO: back end (data retrieval), queries needed below
+            // TODO: back end, specifics below
+            Statement stmt = conn.createStatement();
+
+            columnNames = database.getColumnNames(stmt, "ingredient");
+
+            inventory = database.ViewTable(stmt, columnNames, "ingredient").stream().map(x -> x.toArray(new String[0])).toArray(String[][]::new);
+
+            menuItems = database.getColumnNames(stmt, "menu_item");
+
+            ingredients = database.getColumnNames(stmt, "ingredient");
+
+            conn.close();
+            JOptionPane.showMessageDialog(null,"Connection Closed.");
         } 
         catch (Exception e) {
             JOptionPane.showMessageDialog(null,"Error accessing Database.");
         }
-
         JFrame frame = new JFrame("DB GUI");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1280, 720);
 
         JPanel inventoryPanel = new JPanel();
-
-        // TODO: replace with ingredient table
-        Object[][] inventory = {
-            {"Tapioca Pearls", 16.62, 10},
-            {"Brown Sugar", 8.00, 40},
-            {"Straws", 12.59, 557}
-        };
-
-        String[] columnNames = {"Name", "Restock Price", "Quantity"};
         DefaultTableModel inventoryModel = new DefaultTableModel(inventory, columnNames);
         JTable inventoryTable = new JTable(inventoryModel);
         JScrollPane inventoryPane = new JScrollPane(inventoryTable);
@@ -62,10 +70,51 @@ public class Manager_GUI extends JFrame {
         inventoryPanel.add(restockButton);
 
         restockButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent k) {
                 // TODO: implement restock request
                 // Update if ingredient already exists, else add new entry
-            }
+                int originalQuantity = -1;
+                for(int i = 0; i < inventory.length; i++){
+                    for(int j = 0; j < inventory[i].length;i++){
+                        if(inventory[i][j] == ingredientField.getText()){
+                            originalQuantity = (int) inventory[i][j-2];
+                            break;
+                        }
+                    }
+                    if(originalQuantity != -1){
+                        break;
+                    }
+                }
+                
+                int quantity = Integer.parseInt(ingredientField.getText()) + originalQuantity;
+                Connection connfunc = null;
+                try {
+                connfunc = DriverManager.getConnection(
+                    "jdbc:postgresql://csce-315-db.engr.tamu.edu/csce315331_09m_db",
+                    "csce315_909_zakborman",
+                    "542618xrad");
+                } 
+                catch (Exception e) {
+                    e.printStackTrace();
+                    System.err.println(e.getClass().getName()+": "+e.getMessage());
+                    System.exit(0);
+                }
+                JOptionPane.showMessageDialog(null,"Opened database successfully");
+                try{
+                    Statement stmt = connfunc.createStatement();
+                    database.UpdateTable(stmt, quantityField.getText(), "ingredient", "quantity", "name", ingredientField.getText());
+                }
+                catch(Exception e){
+                    JOptionPane.showMessageDialog(null,"Error accessing Database.");
+                }
+                try {
+                    connfunc.close();
+                    JOptionPane.showMessageDialog(null,"Connection Closed.");
+                } 
+                catch (Exception e) {
+                    JOptionPane.showMessageDialog(null,"Connection NOT Closed.");
+                }
+                }
         });
         
         JPanel menuPanel = new JPanel();
@@ -74,7 +123,6 @@ public class Manager_GUI extends JFrame {
         menuButtonPanel.setLayout(new BoxLayout(menuButtonPanel, BoxLayout.Y_AXIS));
 
         // TODO: replace with name column of menu_item table
-        String[] menuItems = {"Classic Milk Tea", "Taro Pearl Milk Tea"};
 
         JList<String> menuList = new JList<>(menuItems);
         JScrollPane menuPane = new JScrollPane(menuList);
@@ -91,7 +139,7 @@ public class Manager_GUI extends JFrame {
         deleteItemButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // TODO: replace with name column of ingredient table
-        String[] ingredients = {"Tapioca Pearls", "Brown Sugar", "Straws"};
+        
 
         JList<JCheckBox> ingredientList = new JList<>();
         DefaultListModel<JCheckBox> menuModel = new DefaultListModel<>();

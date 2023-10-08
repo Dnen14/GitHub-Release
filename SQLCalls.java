@@ -36,7 +36,7 @@ public class SQLCalls{
                 
                 ArrayList<String> column = new ArrayList<String>();
 
-                for(int i = 0; i < columnNames.length; i++){
+                for(int i = 1; i <= columnNames.length; i++){
                     column.add(rs.getString(i));
                 }
 
@@ -85,8 +85,51 @@ public class SQLCalls{
         }
     }
 
-    public static void UpdateTable(){
-        
+    public static void UpdateTable(Statement stmt, Object value, String table, String changedValueColumn, String sameValueColumn, String sameValue){
+        try{
+                String changedAddedValue = "";
+                String sameAddedValue = "";
+
+                if(value instanceof String){
+                    changedAddedValue = "'"+value+"'";
+                }
+                else{
+                    changedAddedValue = value.toString();
+                }
+                if(sameValue instanceof String){
+                    sameAddedValue = "'"+sameValue+"'";
+                }
+                else{
+                    sameAddedValue = sameValue.toString();
+                }
+
+                stmt.executeUpdate("UPDATE " + table + " SET " + changedValueColumn + " = " + changedAddedValue + " WHERE " + sameValueColumn + " = " + sameAddedValue);
+            }
+        catch(Exception e){
+            e.printStackTrace();
+            System.err.println(e.getClass().getName()+": "+e.getMessage());
+            System.exit(0);
+        }
+    }
+
+    public static void deleteItem(Statement stmt, String table, String column, Object value){
+        try{
+            String deleteCondition = "";
+           if(value instanceof String){
+                    deleteCondition = "'"+value+"'";
+            }
+            else{
+                deleteCondition = value.toString();
+            }
+
+            stmt.executeUpdate("DELETE FROM " + table + " WHERE " + column + " = " + deleteCondition);
+
+        }
+        catch(Exception e){
+            e.printStackTrace();
+            System.err.println(e.getClass().getName()+": "+e.getMessage());
+            System.exit(0);
+        }
     }
 
 }

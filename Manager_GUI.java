@@ -12,19 +12,19 @@ public class Manager_GUI extends JFrame {
     public static void main(String[] args)
     {
         //Building the connection
-        // Connection conn = null;
-        // try {
-        // conn = DriverManager.getConnection(
-        //     "jdbc:postgresql://csce-315-db.engr.tamu.edu/csce315331_09m_db",
-        //     "csce315_909_NETID",
-        //     "PASSWORD");
-        // } 
-        // catch (Exception e) {
-        //     e.printStackTrace();
-        //     System.err.println(e.getClass().getName()+": "+e.getMessage());
-        //     System.exit(0);
-        // }
-        // JOptionPane.showMessageDialog(null,"Opened database successfully");
+        Connection conn = null;
+        try {
+        conn = DriverManager.getConnection(
+            "jdbc:postgresql://csce-315-db.engr.tamu.edu/csce315331_09m_db",
+            "csce315_909_NETID",
+            "PASSWORD");
+        } 
+        catch (Exception e) {
+            e.printStackTrace();
+            System.err.println(e.getClass().getName()+": "+e.getMessage());
+            System.exit(0);
+        }
+        JOptionPane.showMessageDialog(null,"Opened database successfully");
 
         inventory = new Object[0][0];
         String[] columnNames = new String[0];
@@ -216,13 +216,13 @@ public class Manager_GUI extends JFrame {
         frame.setVisible(true);
 
         //closing the connection
-        // try {
-        //     conn.close();
-        //     JOptionPane.showMessageDialog(null,"Connection Closed.");
-        // } 
-        // catch (Exception e) {
-        //     JOptionPane.showMessageDialog(null,"Connection NOT Closed.");
-        // }
+        try {
+            conn.close();
+            JOptionPane.showMessageDialog(null,"Connection Closed.");
+        } 
+        catch (Exception e) {
+            JOptionPane.showMessageDialog(null,"Connection NOT Closed.");
+        }
     }
 }
 

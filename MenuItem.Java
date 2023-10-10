@@ -7,7 +7,7 @@ enum ItemSize{
 public class MenuItem{
     private double _price;
     private String _name;
-    private long int _id;
+    private long _id;
     private ItemSize _size;
 
 
@@ -15,19 +15,19 @@ public class MenuItem{
         this(-1);
     }
 
-    public MenuItem(long int id){
+    public MenuItem(long id){
         this(id,"Default Name");
     }
 
-    public MenuItem(long int id, String name){
+    public MenuItem(long id, String name){
         this(id,name,0.0);
     }
 
-    public MenuItem(long int id, String name, double price){
+    public MenuItem(long id, String name, double price){
         this(id,name,price,ItemSize.Medium);
     }
 
-    public MenuItem(long int id, String name, double price, ItemSize size){
+    public MenuItem(long id, String name, double price, ItemSize size){
         _price = price;
         _name = name;
         _id = id;
@@ -46,23 +46,23 @@ public class MenuItem{
         _size = size;
     }
 
-    public void setId(long int id){
+    public void setId(long id){
         _id = id;
     }
 
-    public double getPrice(double price){
+    public double getPrice(){
         return _price;
     }
 
-    public String getName(String name){
+    public String getName(){
         return _name;
     }
 
-    public ItemSize getSize(String size){
+    public ItemSize getSize(){
         return _size;
     }
 
-    public long int getId(long int id){
+    public long getId(){
         return _id;
     }
 }

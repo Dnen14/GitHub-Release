@@ -24,6 +24,78 @@ public class SQLCalls{
         return null;
     }
 
+    public String[] getSpecifiedTableValues(Statement stmt, String table, String columnName){
+        try{
+            ResultSet rs = stmt.executeQuery("SELECT " + columnName + " FROM " + table);
+            rs.last();
+            int rowCount = rs.getRow();
+            rs.beforeFirst();
+            String[] columns = new String[rowCount];
+            int i = 0;
+
+            while (rs.next()){
+                columns[i] = rs.getString(columnName);
+                i++;
+            }
+
+            return columns;
+            
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            System.err.println(e.getClass().getName()+": "+e.getMessage());
+            System.exit(0);
+        }
+        return null;
+    }
+
+     public String getOneTableValue(Statement stmt, String table, String columnName, String conditionColumn, String conditionValue){
+        try{
+            conditionValue = "'" + conditionValue + "'";
+            ResultSet rs = stmt.executeQuery("SELECT " + columnName + " FROM " + table + " WHERE " + conditionColumn + " = " + conditionValue);
+            String column = new String();
+
+            while (rs.next()){
+                column = rs.getString(columnName);
+            }
+
+            return column;
+            
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            System.err.println(e.getClass().getName()+": "+e.getMessage());
+            System.exit(0);
+        }
+        return null;
+    }
+
+    public String[] getMultipleTableValues(Statement stmt, String table, String columnName, String conditionColumn, String conditionValue){
+        try{
+            conditionValue = "'" + conditionValue + "'";
+            ResultSet rs = stmt.executeQuery("SELECT " + columnName + " FROM " + table + " WHERE " + conditionColumn + " = " + conditionValue);
+            rs.last();
+            int rowCount = rs.getRow();
+            rs.beforeFirst();
+            String[] columns = new String[rowCount];
+            int i = 0;
+
+            while (rs.next()){
+                columns[i] = rs.getString(columnName);
+                i++;
+            }
+
+            return columns;
+            
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            System.err.println(e.getClass().getName()+": "+e.getMessage());
+            System.exit(0);
+        }
+        return null;
+    }
+
     //Views the a table for the manager
     //Runs a SQL command and then formats the results
     public ArrayList<ArrayList<String>> ViewTable(Statement stmt, String[] columnNames, String table){

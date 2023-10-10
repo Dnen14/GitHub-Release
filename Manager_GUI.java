@@ -1,6 +1,8 @@
 import java.sql.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.Random;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -9,6 +11,8 @@ import javax.swing.table.DefaultTableModel;
 
 public class Manager_GUI extends JFrame {
     public static Object[][] inventory;
+    public static String[] ingredients = new String[0];
+    public static String[] menuItems = new String[0];
     public static void main(String[] args)
     {
         //Building the connection
@@ -29,19 +33,17 @@ public class Manager_GUI extends JFrame {
         inventory = new Object[0][0];
         String[] columnNames = new String[0];
         SQLCalls database = new SQLCalls();
-        String[] menuItems = new String[0];
-        String[] ingredients = new String[0];
         try {
             // TODO: back end, specifics below
-            Statement stmt = conn.createStatement();
+            Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 
             columnNames = database.getColumnNames(stmt, "ingredient");
 
             inventory = database.ViewTable(stmt, columnNames, "ingredient").stream().map(x -> x.toArray(new String[0])).toArray(String[][]::new);
 
-            menuItems = database.getColumnNames(stmt, "menu_item");
+            menuItems = database.getSpecifiedTableValues(stmt, "menu_item", "name");
 
-            ingredients = database.getColumnNames(stmt, "ingredient");
+            ingredients = database.getSpecifiedTableValues(stmt, "ingredient", "name");
 
             conn.close();
             JOptionPane.showMessageDialog(null,"Connection Closed.");
@@ -152,11 +154,64 @@ public class Manager_GUI extends JFrame {
         JScrollPane ingredientPane = new JScrollPane(ingredientList);
 
         menuList.addListSelectionListener(new ListSelectionListener() {
-            public void valueChanged(ListSelectionEvent e) {
-                if (!e.getValueIsAdjusting()) {
+            public void valueChanged(ListSelectionEvent j) {
+                if (!j.getValueIsAdjusting()) {
                     // TODO: Get data of item selected in list
                     // fill menuItemField, priceField and select
                     // checkboxes of ingredients in item
+                    Connection connfunc = null;
+                    String priceValue = "";
+                    String menuID = "";
+                    String[] selectedIngredientsID = new String[0];
+                    String[] selectedIngredients = new String[0];
+                    try {
+                    connfunc = DriverManager.getConnection(
+                        "jdbc:postgresql://csce-315-db.engr.tamu.edu/csce315331_09m_db",
+                        "csce315_909_zakborman",
+                        "542618xrad");
+                    } 
+                    catch (Exception e) {
+                        e.printStackTrace();
+                        System.err.println(e.getClass().getName()+": "+e.getMessage());
+                        System.exit(0);
+                    }
+                    JOptionPane.showMessageDialog(null,"Opened database successfully");
+                    try{
+                        Statement stmt = connfunc.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                        priceValue = database.getOneTableValue(stmt, "menu_item", "price", "name", (String) menuList.getSelectedValue());
+                        menuID = database.getOneTableValue(stmt, "menu_item", "id", "name", (String) menuList.getSelectedValue());
+                        selectedIngredientsID = database.getMultipleTableValues(stmt, "ingredient_menu_item_join_table", "ingredient_id", "menu_item_id", menuID);
+                        selectedIngredients = new String[selectedIngredientsID.length];
+                        for(int i = 0; i < selectedIngredientsID.length; i++){
+                            selectedIngredients[i] = database.getOneTableValue(stmt, "ingredient", "name", "id", selectedIngredientsID[i]);
+                        }
+                    }
+                    catch(Exception e){
+                        JOptionPane.showMessageDialog(null,"Error accessing Database.");
+                    }
+                    try {
+                        connfunc.close();
+                        JOptionPane.showMessageDialog(null,"Connection Closed.");
+                    } 
+                    catch (Exception e) {
+                        JOptionPane.showMessageDialog(null,"Connection NOT Closed.");
+                    }
+
+                    String SelectedValue = (String) menuList.getSelectedValue();
+                    menuItemField.setText(SelectedValue); 
+                    priceField.setText(priceValue);
+
+                    int count = 0;
+                    for(int i = 0; i < ingredients.length; i++){
+                        for(int k = 0; k < selectedIngredients.length; k++){
+                            if(menuModel.getElementAt(i).getText().equals(selectedIngredients[k])){
+                                menuModel.getElementAt(i).setSelected(true);
+                            }
+                        }
+                    }
+
+                    ingredientList.setModel(menuModel);
+                    ingredientList.setCellRenderer(new CheckBoxListCellRenderer());
                 }
             }
         });
@@ -175,8 +230,62 @@ public class Manager_GUI extends JFrame {
         });
 
         addItemButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent j) {
                 // TODO: add item to menu_item
+                String itemID = "";
+                Connection connfunc = null;
+                ArrayList<String> selectedCheckboxes = new ArrayList<String>();
+                Object[] values;
+                Object[] selectedCheckboxesIDs = new Object[0];
+                try {
+                connfunc = DriverManager.getConnection(
+                    "jdbc:postgresql://csce-315-db.engr.tamu.edu/csce315331_09m_db",
+                    "csce315_909_zakborman",
+                    "542618xrad");
+                } 
+                catch (Exception e) {
+                    e.printStackTrace();
+                    System.err.println(e.getClass().getName()+": "+e.getMessage());
+                    System.exit(0);
+                }
+                JOptionPane.showMessageDialog(null,"Opened database successfully");
+                try{
+                    Statement stmt = connfunc.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                    String SelectedValue = (String) menuList.getSelectedValue();
+                    for(int i = 0; i < ingredients.length; i++){
+                        if(menuModel.getElementAt(i).isSelected() == true){
+                            selectedCheckboxes.add((String) menuModel.getElementAt(i).getText());
+                        }
+                    }
+                    selectedCheckboxesIDs = new Object[selectedCheckboxes.size()];
+                    for(int i = 0; i < selectedCheckboxes.size(); i++){
+                        selectedCheckboxesIDs[i] = database.getOneTableValue(stmt, "ingredient", "id", "name", selectedCheckboxes.get(i));
+                    }
+
+                    values = new Object[4];
+                    values[0] = menuItems.length + 1;
+                    values[1] = "medium";
+                    values[2] = priceField.getText();
+                    values[3] = menuItemField.getText();
+                    Random num = new Random();
+
+                    database.AddItem("menu_item", stmt, values);
+
+                    for(int i = 0; i < selectedCheckboxesIDs.length; i++){
+                        Object[] inputVals = {num.nextInt(10000)+1, selectedCheckboxesIDs[i], menuItems.length};
+                        database.AddItem("ingredient_menu_item_join_table", stmt, inputVals);
+                    }
+                }
+                catch(Exception e){
+                    JOptionPane.showMessageDialog(null,"Error accessing Database.");
+                }
+                try {
+                    connfunc.close();
+                    JOptionPane.showMessageDialog(null,"Connection Closed.");
+                } 
+                catch (Exception e) {
+                    JOptionPane.showMessageDialog(null,"Connection NOT Closed.");
+                }
             }
         });
 
@@ -189,6 +298,7 @@ public class Manager_GUI extends JFrame {
         deleteItemButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // TODO: remove item from menu_item
+                
             }
         });
 

@@ -34,7 +34,7 @@ class menuItem:
 order_file = open("orders.csv","wt")
 order_file.write("order_id,order_total,order_date_placed\n")
 join_table_file = open("join_table.csv","wt")
-join_table_file.write("Order_ID,Menu_item\n")
+join_table_file.write("id,orderid,Menu_item\n")
 orders = []
 menu_item_order_join = []
 menu_item_prices = [7.2, 5.18, 4.96, 5.2, 6.66, 5.63, 5.15, 6.23, 5.44, 5.44, 6.49, 5.46, 5.17, 5.64, 6.12, 6.12, 6.55,
@@ -59,6 +59,7 @@ print(date_year,type(date_year))
 print(date_month,type(date_month))
 print(date_day,type(date_day))
 order_id = 0
+join_id = 0
 
 
 for week in range(52):
@@ -92,11 +93,7 @@ for week in range(52):
                 price = menu_item_prices[menu_item]
                 total -= price
                 current_order.total += price
-                item_index = [x for x in range(len(menu_item_order_join)) if menu_item_order_join[x] == (order_id,menu_item)]
-                if item_index != []:
-                    menu_item_order_join[item_index][1] += 1
-                else:
-                    menu_item_order_join += [(order_id,menu_item*1000)]
+                menu_item_order_join += [(order_id,menu_item)]
             
             orders += [current_order]
 
@@ -113,6 +110,7 @@ for o in orders:
     order_file.write(f"{o.id},{o.total},{o.date_placed}\n")
 
 for i in range(len(menu_item_order_join)):
-    join_table_file.write(f"{menu_item_order_join[i][0]},{menu_item_order_join[i][1]}\n")
+    join_table_file.write(f"{join_id},{menu_item_order_join[i][1]%5 + 1},{menu_item_order_join[i][0]}\n")
+    join_id += 1
 
 print(total)

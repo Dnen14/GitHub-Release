@@ -3,7 +3,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Random;
-import MenuItem;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -11,10 +10,12 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 public class Cashier_GUI extends JFrame {
+    private static Connection conn = null;
+    private static ArrayList<MenuItem> orderSummary = new ArrayList<>();
+    private static JPanel orderSummaryPanel;
     public static void main(String[] args)
     {
         //Building the connection
-        Connection conn = null;
         try {
         conn = DriverManager.getConnection(
             "jdbc:postgresql://csce-315-db.engr.tamu.edu/csce315331_09m_db",
@@ -32,27 +33,11 @@ public class Cashier_GUI extends JFrame {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 600);
         
-        // Create menu items panel
-        JPanel menuPanel = new JPanel();
-            menuPanel.setLayout(new GridLayout(0, 1));
-    
-            ArrayList<MenuItem> MenuItems = getMenuItems();
-    
-            for (MenuItem menuItem : MenuItems) {
-                JButton itemButton = new JButton(menuItem.getName() + " - $" + menuItem.getPrice());
-                itemButton.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        // Add the selected item to the order summary
-                    }
-                });
-                menuPanel.add(itemButton);
-            }
-        // Add menu items buttons or list here
-        
         // Create order summary panel
-        JPanel orderSummaryPanel = new JPanel();
-        // Add order summary components here
+        orderSummaryPanel = createOrderSummaryPanel();
+
+        // Create menu items panel
+        JPanel menuPanel = createMenuPanel();
         
         frame.add(menuPanel);
         frame.add(orderSummaryPanel);
@@ -68,6 +53,46 @@ public class Cashier_GUI extends JFrame {
         catch (Exception e) {
             JOptionPane.showMessageDialog(null,"Connection NOT Closed.");
         }
+    }
+
+    private static JPanel createMenuPanel() {
+        JPanel menuPanel = new JPanel();
+        menuPanel.setLayout(new GridLayout(0, 1));
+
+        ArrayList<MenuItem> menuItems = getMenuItems();
+
+        for (MenuItem menuItem : menuItems) {
+            JButton itemButton = new JButton(menuItem.getName() + " - $" + menuItem.getPrice());
+            itemButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    // Add the selected item to the order summary
+                    orderSummary.add(menuItem);
+                    updateOrderSummary();
+                }
+            });
+            menuPanel.add(itemButton);
+        }
+
+        return menuPanel;
+    }
+
+    private static JPanel createOrderSummaryPanel() {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        return panel;
+    }
+
+    private static void updateOrderSummary() {
+        orderSummaryPanel.removeAll(); // Clear the order summary panel
+
+        for (MenuItem menuItem : orderSummary) {
+            JLabel itemLabel = new JLabel(menuItem.getName() + " - $" + menuItem.getPrice());
+            orderSummaryPanel.add(itemLabel);
+        }
+
+        orderSummaryPanel.revalidate(); // Refresh the order summary panel
+        orderSummaryPanel.repaint();
     }
 
     private static ArrayList<MenuItem> getMenuItems() {

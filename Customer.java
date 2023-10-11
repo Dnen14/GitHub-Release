@@ -18,6 +18,11 @@ public class Customer{
         this(id,name,"Default@email.com");
     }
 
+    public Customer(String name, String email){
+        this(CashierCalls.getNextCustomerId(), name, email);
+        
+    }
+
     public Customer(long id, String name, String email){
         _id = id;
         _name = name;

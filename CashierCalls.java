@@ -50,6 +50,40 @@ public final class CashierCalls extends SQLCalls{
         @throws no errors
     */
     public static long getNextOrderId(){
+        return getNextTableId("order_table")
+    }
+
+    /*
+        @author Brandon Thomas
+        @return long containing the next available id in the menu item order join table of the database
+    */
+    public static long getNextMenuOrderJoinId(){
+        return getNextTableId("menu_item_order_join_table")
+    }
+
+    /*
+        @author Brandon Thomas
+        @return long containing the next available id in the customer table of the database
+    */
+    public static long getNextCustomerId(){
+        return getNextTableId("customer")
+    }
+
+    /*
+        @author Brandon Thomas
+        @return long containing the next available id in the menu item order join table of the database
+    */
+    public static long getNextCustomerOrderJoinId(){
+        return getNextTableId("customer_order_join_table")
+    }
+
+    /*
+        @author Brandon Thomas
+        @param table - the table to get the next available id from
+        @return a long containing the next available id from the table
+        @throws no errors
+    */
+    public static long getNextTableId(String table){
         Connection conn = null;
         long id = -1;
         try {
@@ -69,46 +103,9 @@ public final class CashierCalls extends SQLCalls{
             Statement st = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             
             // make the query
-            ResultSet rs = st.executeQuery("SELECT MAX(id) as max_id FROM order_table");
+            ResultSet rs = st.executeQuery("SELECT MAX(id) as max_id FROM " + table);
 
             // get value from query
-            rs.next();
-            id = Long.valueOf(rs.getString("max_id")).longValue();
-        }
-        catch (Exception e){
-            System.out.println("DB Querry Failed");
-            System.out.println(e.getClass().getName() + ": " + e.getMessage());
-        }
-        return id + 1;
-    }
-
-    /*
-        @author Brandon Thomas
-        @return long containing the next available id in the menu item order join table of the database
-    */
-    public static long getNextMenuOrderJoinId(){
-        Connection conn = null;
-        long id = -1;
-        try {
-            //establish the connection
-            conn = DriverManager.getConnection(
-                "jdbc:postgresql://csce-315-db.engr.tamu.edu/csce315331_09m_db",
-                "csce315_909_bat2492",
-                "BT2415");
-        } 
-        catch (Exception e) {
-            e.printStackTrace();
-            System.err.println(e.getClass().getName()+": "+e.getMessage());
-            System.exit(0);
-        }
-        try{
-            //create the statement
-            Statement st = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            
-            // make the query
-            ResultSet rs = st.executeQuery("SELECT MAX(id) as max_id FROM menu_item_order_join_table");
-
-            //get value from query
             rs.next();
             id = Long.valueOf(rs.getString("max_id")).longValue();
         }

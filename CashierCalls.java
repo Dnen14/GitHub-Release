@@ -49,13 +49,14 @@ public final class CashierCalls extends SQLCalls{
                     break;
                 }
             }
-            // add the order customer relation to the join table
-            call.AddItem("customer_order_join_table",st,new String[]{String.valueOf(getNextCustomerOrderJoinId()),String.valueOf(order_id),String.valueOf(c.getId())});
-            
+
             // if the customer is new add them to the customer table
             if(new_customer){
                 call.AddItem("customer",st,new String[]{String.valueOf(c.getId()),c.getName(),c.getEmail()});
             }
+
+            // add the order customer relation to the join table
+            call.AddItem("customer_order_join_table",st,new String[]{String.valueOf(getNextCustomerOrderJoinId()),String.valueOf(order_id),String.valueOf(c.getId())});   
 
         }
         catch (Exception e){
@@ -170,11 +171,11 @@ public final class CashierCalls extends SQLCalls{
         ArrayList<MenuItem> ret = new ArrayList<MenuItem>();
         try{
             for(ArrayList<String> string_menu_item: items){
-                System.out.println("Printing Menu Item: ");
-                System.out.println("\tid: " + string_menu_item.get(0));
-                System.out.println("\tsize: " + string_menu_item.get(1));
-                System.out.println("\tprice: " + string_menu_item.get(2));
-                System.out.println("\tname: " + string_menu_item.get(3));
+                // System.out.println("Printing Menu Item: ");
+                // System.out.println("\tid: " + string_menu_item.get(0));
+                // System.out.println("\tsize: " + string_menu_item.get(1));
+                // System.out.println("\tprice: " + string_menu_item.get(2));
+                // System.out.println("\tname: " + string_menu_item.get(3));
                 MenuItem item = new MenuItem(Long.valueOf(string_menu_item.get(0)).longValue(),//id
                                              string_menu_item.get(3),//name
                                              Double.valueOf(string_menu_item.get(2)).doubleValue());//price

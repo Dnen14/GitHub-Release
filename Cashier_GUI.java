@@ -101,7 +101,7 @@ public class Cashier_GUI extends JFrame {
         ArrayList<MenuItem> menuItems = getMenuItems();
 
         for (MenuItem menuItem : menuItems) {
-            System.out.println(menuItem.getName());
+            // System.out.println(menuItem.getName());
             JButton itemButton = new JButton(menuItem.getName() + " - $" + menuItem.getPrice());
             itemButton.addActionListener(new ActionListener() {
                 @Override

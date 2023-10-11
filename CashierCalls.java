@@ -4,8 +4,13 @@ import java.time.*;
 
 public final class CashierCalls extends SQLCalls{
     
-    
-    public static void submitOrder(ArrayList<MenuItem> items){
+    /*
+        @author Brandon Thomas
+        @param ArrayList<MenuItem> items - list of menu items in the order
+        @param Customer c - customer that placed the order
+        @throws no errors
+    */
+    public static void submitOrder(ArrayList<MenuItem> items,Customer c){
         Connection conn = null;
         try {
         conn = DriverManager.getConnection(
@@ -33,7 +38,11 @@ public final class CashierCalls extends SQLCalls{
         }
 
     }
-
+    /*
+        @author Brandon Thomas
+        @return a long containing the next available id of an order
+        @throws no errors
+    */
     public static long getNextOrderId(){
         Connection conn = null;
         long id = -1;
@@ -139,6 +148,12 @@ public final class CashierCalls extends SQLCalls{
         return ret;
     }
 
+    /*
+        @author Brandon Thomas
+        @param ArrayList<MenuItem> items - a list of all of the items in an order
+        @returns double - total price of all of the items in the list
+        @throws no errors
+    */
     public static double getTotal(ArrayList<MenuItem> items){
         double total = 0.0;
         for(MenuItem item : items){

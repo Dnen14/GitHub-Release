@@ -1,4 +1,5 @@
 import java.sql.*;
+import java.text.DecimalFormat;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ public class Cashier_GUI extends JFrame {
     private static Connection conn = null;
     private static ArrayList<MenuItem> orderSummary = new ArrayList<>();
     private static JPanel orderSummaryPanel;
+    private static JLabel totalLabel;
     public static void main(String[] args)
     {
         //Building the connection
@@ -38,9 +40,13 @@ public class Cashier_GUI extends JFrame {
 
         // Create menu items panel
         JPanel menuPanel = createMenuPanel();
+
+        //Create panel for total
+        totalLabel = new JLabel("Total: $0.00");
         
         frame.add(menuPanel);
         frame.add(orderSummaryPanel);
+        frame.add(totalLabel);
         
         frame.setLayout(new GridLayout(1, 2)); // Arrange panels side by side
         frame.setVisible(true);
@@ -86,14 +92,75 @@ public class Cashier_GUI extends JFrame {
     private static void updateOrderSummary() {
         orderSummaryPanel.removeAll(); // Clear the order summary panel
 
-        for (MenuItem menuItem : orderSummary) {
-            JLabel itemLabel = new JLabel(menuItem.getName() + " - $" + menuItem.getPrice());
-            orderSummaryPanel.add(itemLabel);
-        }
+        // Calculate and display the total
+        double total = orderSummary.stream().mapToDouble(MenuItem::getPrice).sum();
+        DecimalFormat df = new DecimalFormat("#.00");
+        totalLabel.setText("Total: $" + df.format(total));
 
+        if (!orderSummary.isEmpty()) {
+            for (MenuItem menuItem : orderSummary) {
+                JPanel itemPanel = new JPanel();
+                JButton removeButton = new JButton("X");
+                removeButton.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        // Remove the selected item from the order summary
+                        orderSummary.remove(menuItem);
+                        updateOrderSummary();
+                    }
+                });
+                JLabel itemLabel = new JLabel(menuItem.getName() + " - $" + menuItem.getPrice());
+                itemPanel.add(removeButton);
+                itemPanel.add(itemLabel);
+                orderSummaryPanel.add(itemPanel);
+                
+            }
+        }
+        
         orderSummaryPanel.revalidate(); // Refresh the order summary panel
-        orderSummaryPanel.repaint();
+        
     }
+
+    /* Want to implement this later for customizing menu items */
+    // private static void showIngredientSelectionDialog(MenuItem menuItem) {
+    //     JDialog dialog = new JDialog();
+    //     dialog.setTitle("Select Ingredients");
+
+    //     JPanel ingredientPanel = new JPanel();
+    //     ingredientPanel.setLayout(new BoxLayout(ingredientPanel, BoxLayout.Y_AXIS));
+
+    //     // Fetch ingredients for the selected menu item from the database
+    //     List<Ingredient> ingredients = getIngredientsForMenuItem(menuItem);
+
+    //     for (Ingredient ingredient : ingredients) {
+    //         JCheckBox checkbox = new JCheckBox(ingredient.getName(), true); // Selected by default
+    //         ingredientPanel.add(checkbox);
+    //     }
+
+    //     JButton addToOrderButton = new JButton("Add to Order");
+    //     addToOrderButton.addActionListener(new ActionListener() {
+    //         @Override
+    //         public void actionPerformed(ActionEvent e) {
+    //             // Process selected ingredients and add the customized item to the order summary
+    //             // You can implement this logic here
+    //             dialog.dispose();
+    //         }
+    //     });
+
+    //     JButton cancelButton = new JButton("Cancel Item");
+    //     cancelButton.addActionListener(new ActionListener() {
+    //         @Override
+    //         public void actionPerformed(ActionEvent e) {
+    //             dialog.dispose();
+    //         }
+    //     });
+
+    //     dialog.add(ingredientPanel, BorderLayout.CENTER);
+    //     dialog.add(addToOrderButton, BorderLayout.SOUTH);
+    //     dialog.add(cancelButton, BorderLayout.SOUTH);
+    //     dialog.pack();
+    //     dialog.setVisible(true);
+    // }
 
     private static ArrayList<MenuItem> getMenuItems() {
         return CashierCalls.getMenuItems();

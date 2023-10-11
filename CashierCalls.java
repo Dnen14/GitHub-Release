@@ -10,7 +10,7 @@ public final class CashierCalls extends SQLCalls{
         @param items - list of menu items in the order
         @param c - customer that placed the order
     */
-    public static void submitOrder(ArrayList<MenuItem> items, Customer C){
+    public static void submitOrder(ArrayList<MenuItem> items, Customer c){
         Connection conn = null;
         try {
             conn = DriverManager.getConnection(
@@ -37,7 +37,25 @@ public final class CashierCalls extends SQLCalls{
                 call.AddItem("menu_item_order_join_table",st,new String[]{String.valueOf(getNextMenuOrderJoinId()),String.valueOf(item.getId()),String.valueOf(order_id)});
             }
 
-            // add the customer to the customer table
+            ArrayList<Customer> all_customers = getCustomers();
+            boolean new_customer = true;
+            //check to see if the customer is a new customer
+            for(Customer cust: all_customers){
+                if(cust.getName().equals(c.getName()) && 
+                   cust.getEmail().equals(c.getEmail())){
+
+                    c.setId(cust.getId());
+                    new_customer = false;
+                    break;
+                }
+            }
+            // add the order customer relation to the join table
+            call.AddItem("customer_order_join_table",st,new String[]{String.valueOf(getNextCustomerOrderJoinId()),String.valueOf(order_id),String.valueOf(c.getId())});
+            
+            // if the customer is new add them to the customer table
+            if(new_customer){
+                call.AddItem("customer",st,new String[]{String.valueOf(c.getId()),c.getName(),c.getEmail()});
+            }
 
         }
         catch (Exception e){

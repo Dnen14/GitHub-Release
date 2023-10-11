@@ -33,7 +33,7 @@ public class Cashier_GUI extends JFrame {
 
         JFrame frame = new JFrame("Cashier POS System");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800, 600);
+        frame.setSize(1280, 720);
         
         // Create order summary panel
         orderSummaryPanel = createOrderSummaryPanel();
@@ -53,7 +53,7 @@ public class Cashier_GUI extends JFrame {
         // Create a panel for checkout and cancel buttons
         JPanel checkoutPanel = new JPanel();
         JButton checkoutButton = new JButton("Checkout");
-        JButton cancelButton = new JButton("Cancel");
+        JButton cancelButton = new JButton("Clear");
 
         checkoutButton.addActionListener(new ActionListener() {
             @Override
@@ -126,7 +126,7 @@ public class Cashier_GUI extends JFrame {
         totalLabel.setText("Total: $" + df.format(total));
 
         if (orderSummary.isEmpty()) {
-            orderSummaryPanel.add(new JLabel("No items in order summary"));
+            orderSummaryPanel.add(new JLabel("Select an item to add to the order"));
             orderSummaryPanel.revalidate();
             orderSummaryPanel.repaint();
             return;

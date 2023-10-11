@@ -3,6 +3,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Random;
+import MenuItem;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -33,6 +34,20 @@ public class Cashier_GUI extends JFrame {
         
         // Create menu items panel
         JPanel menuPanel = new JPanel();
+            menuPanel.setLayout(new GridLayout(0, 1));
+    
+            ArrayList<MenuItem> MenuItems = getMenuItems();
+    
+            for (MenuItem menuItem : MenuItems) {
+                JButton itemButton = new JButton(menuItem.getName() + " - $" + menuItem.getPrice());
+                itemButton.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        // Add the selected item to the order summary
+                    }
+                });
+                menuPanel.add(itemButton);
+            }
         // Add menu items buttons or list here
         
         // Create order summary panel
@@ -53,5 +68,9 @@ public class Cashier_GUI extends JFrame {
         catch (Exception e) {
             JOptionPane.showMessageDialog(null,"Connection NOT Closed.");
         }
+    }
+
+    private static ArrayList<MenuItem> getMenuItems() {
+        return CashierCalls.getMenuItems();
     }
 }

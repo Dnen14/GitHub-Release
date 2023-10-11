@@ -148,14 +148,18 @@ public final class CashierCalls extends SQLCalls{
         @author Brandon Thomas
         @return ArrayList<Customer> a list containing all of the customers in the db
     */
-    public ArrayList<Customer> getCustomers(){
+    public static ArrayList<Customer> getCustomers(){
         Connection conn = getConnection();
         ArrayList<ArrayList<String>> str_customers = new ArrayList<ArrayList<String>>();
         try{
             Statement st = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             SQLCalls s = new SQLCalls();
 
-            str_customers = s.ViewTable(st,new String[]{"id","_name","email"});
+            str_customers = s.ViewTable(st,new String[]{"id","_name","email"},"customer");
+        }
+        catch (Exception e){
+            System.out.println("DB Querry Failed");
+            System.out.println(e.getClass().getName() + ": " + e.getMessage());
         }
         ArrayList<Customer> customers = new ArrayList<Customer>();
         try{
@@ -186,7 +190,7 @@ public final class CashierCalls extends SQLCalls{
         return total;
     }
 
-    public Connection getConnection(){
+    public static Connection getConnection(){
         Connection conn = null;
         try {
             conn = DriverManager.getConnection(

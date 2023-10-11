@@ -184,17 +184,10 @@ public class SQLCalls{
         }
     }
 
-    public static void deleteItem(Statement stmt, String table, String column, Object value){
+    public static void deleteItem(Statement stmt, String table, String column, String value){
         try{
-            String deleteCondition = "";
-           if(value instanceof String){
-                    deleteCondition = "'"+value+"'";
-            }
-            else{
-                deleteCondition = value.toString();
-            }
 
-            stmt.executeUpdate("DELETE FROM " + table + " WHERE " + column + " = " + deleteCondition);
+            stmt.executeUpdate("DELETE FROM " + table + " WHERE " + column + " = " + value);
 
         }
         catch(Exception e){
@@ -202,6 +195,29 @@ public class SQLCalls{
             System.err.println(e.getClass().getName()+": "+e.getMessage());
             System.exit(0);
         }
+    }
+
+    public String checkIfValueExists(Statement stmt, String table, String returnedColumnName, String conditionColumnName, String condition){
+        try{
+            String ret = "";
+            ResultSet rs = stmt.executeQuery("SELECT " + returnedColumnName + " FROM " + table + " WHERE EXISTS " + "(SELECT  " + conditionColumnName + " FROM " + table + " WHERE " + condition + ")");
+            
+            if(rs.next()){
+                ret = "TRUE";
+            }
+            else
+            {
+                ret = "FALSE";
+            }
+
+            return ret;
+        }
+        catch(Exception e){
+            e.printStackTrace();
+            System.err.println(e.getClass().getName()+": "+e.getMessage());
+            System.exit(0);
+        }
+        return null;
     }
 
 }

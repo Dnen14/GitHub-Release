@@ -27,19 +27,18 @@ VALUES (1, 10, 16.62, 'Tapioca Pearls'),
        (15, 14, 34.99, 'Mango'),
        (16, 3, 11.99, 'Jasmine Green Tea'),
        (17, 2, 6.99, 'Whipped Cream'),
-       (18, 28, 16.99, 'Oreos'),
        (19, 4, 11.99, 'Pineapple'),
        (20, 87, 13.99, 'Cups');
 
 
 -- Insert the ingredient-menu_item relationship into the ingredientmenuitemjointable (such as every drink needs a cup)
 INSERT INTO ingredient_menu_item_join_table (id, ingredient_id, menu_item_id)
-VALUES (1, 20, 1), -- Every drink needs a cup
+VALUES (1, 20, 1),
        (2, 20, 2),
        (3, 20, 3),
        (4, 20, 4),
        (5, 20, 5),
-       (6, 1, 1), -- Every drink needs tapioca pearls
+       (6, 1, 1), 
        (7, 1, 2),
        (8, 1, 3),
        (9, 1, 4),
@@ -73,7 +72,6 @@ VALUES (1, 20, 1), -- Every drink needs a cup
        (37, 12, 5),
        (38, 13, 5),
        (39, 17, 5),
-       (40, 18, 5);
 
 
        

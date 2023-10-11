@@ -50,7 +50,7 @@ public final class CashierCalls extends SQLCalls{
         @throws no errors
     */
     public static long getNextOrderId(){
-        return getNextTableId("order_table")
+        return getNextTableId("order_table");
     }
 
     /*
@@ -58,7 +58,7 @@ public final class CashierCalls extends SQLCalls{
         @return long containing the next available id in the menu item order join table of the database
     */
     public static long getNextMenuOrderJoinId(){
-        return getNextTableId("menu_item_order_join_table")
+        return getNextTableId("menu_item_order_join_table");
     }
 
     /*
@@ -66,7 +66,7 @@ public final class CashierCalls extends SQLCalls{
         @return long containing the next available id in the customer table of the database
     */
     public static long getNextCustomerId(){
-        return getNextTableId("customer")
+        return getNextTableId("customer");
     }
 
     /*
@@ -74,7 +74,7 @@ public final class CashierCalls extends SQLCalls{
         @return long containing the next available id in the menu item order join table of the database
     */
     public static long getNextCustomerOrderJoinId(){
-        return getNextTableId("customer_order_join_table")
+        return getNextTableId("customer_order_join_table");
     }
 
     /*

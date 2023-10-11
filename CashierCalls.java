@@ -117,6 +117,11 @@ public final class CashierCalls extends SQLCalls{
         ArrayList<MenuItem> ret = new ArrayList<MenuItem>();
         try{
             for(ArrayList<String> string_menu_item: items){
+                System.out.println("Printing Menu Item: ");
+                System.out.println("\tid: " + string_menu_item.get(0));
+                System.out.println("\tsize: " + string_menu_item.get(1));
+                System.out.println("\tprice: " + string_menu_item.get(2));
+                System.out.println("\tname: " + string_menu_item.get(3));
                 MenuItem item = new MenuItem(Long.valueOf(string_menu_item.get(0)).longValue(),//id
                                              string_menu_item.get(3),//name
                                              Double.valueOf(string_menu_item.get(2)).doubleValue());//price
@@ -164,6 +169,10 @@ public final class CashierCalls extends SQLCalls{
         ArrayList<Customer> customers = new ArrayList<Customer>();
         try{
             for(ArrayList<String> str_customer: str_customers){
+                System.out.println("printing Customer: ");
+                System.out.println("\tid: " + str_customer.get(0));
+                System.out.println("\tname: " + str_customer.get(1));
+                System.out.println("\temail: " + str_customer.get(2));
                 Customer cus = new Customer(Long.valueOf(str_customer.get(0)).longValue(),//Id
                                             str_customer.get(1),//Name
                                             str_customer.get(2));//email

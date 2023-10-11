@@ -20,8 +20,8 @@ public class Manager_GUI extends JFrame {
         try {
         conn = DriverManager.getConnection(
             "jdbc:postgresql://csce-315-db.engr.tamu.edu/csce315331_09m_db",
-            "csce315_909_NETID",
-            "PASSWORD");
+            "csce315_909_zakborman",
+            "542618xrad");
         } 
         catch (Exception e) {
             e.printStackTrace();
@@ -200,6 +200,9 @@ public class Manager_GUI extends JFrame {
                     String SelectedValue = (String) menuList.getSelectedValue();
                     menuItemField.setText(SelectedValue); 
                     priceField.setText(priceValue);
+                    for(int i = 0; i < ingredients.length; i++){
+                        menuModel.getElementAt(i).setSelected(false);
+                    }
 
                     int count = 0;
                     for(int i = 0; i < ingredients.length; i++){
@@ -263,7 +266,7 @@ public class Manager_GUI extends JFrame {
                     }
 
                     values = new Object[4];
-                    values[0] = menuItems.length + 1;
+                    values[0] = menuItems.length + 2;
                     values[1] = "medium";
                     values[2] = priceField.getText();
                     values[3] = menuItemField.getText();
@@ -290,21 +293,112 @@ public class Manager_GUI extends JFrame {
         });
 
         updateItemButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent j) {
                 // TODO: update item of same name in menu_item
+                Connection connfunc = null;
+                String selectedCheckboxes = new String();
+                Object selectedCheckboxesIDs = new Object();
+                 try {
+                connfunc = DriverManager.getConnection(
+                    "jdbc:postgresql://csce-315-db.engr.tamu.edu/csce315331_09m_db",
+                    "csce315_909_zakborman",
+                    "542618xrad");
+                } 
+                catch (Exception e) {
+                    e.printStackTrace();
+                    System.err.println(e.getClass().getName()+": "+e.getMessage());
+                    System.exit(0);
+                }
+                JOptionPane.showMessageDialog(null,"Opened database successfully");
+                try{
+                    Statement stmt = connfunc.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                    database.UpdateTable(stmt,(Object) priceField.getText(), "menu_item", "price", "name", menuList.getSelectedValue());
+                    String selectedMenuItemID = database.getOneTableValue(stmt, "menu_item", "id", "name", menuList.getSelectedValue());
+                    
+                    for(int i = 0; i < ingredients.length; i++){
+                        String selectedIngredientItemID = database.getOneTableValue(stmt, "ingredient", "id", "name", ingredients[i]);
+                        String condition = "menu_item_id = " + selectedMenuItemID + " AND ingredient_id = " + selectedIngredientItemID;
+
+                        if(menuModel.getElementAt(i).isSelected() == true && "FALSE".equals(database.checkIfValueExists(stmt, "ingredient_menu_item_join_table", "id", "id",condition))){
+                            priceField.setText(condition);
+                            selectedCheckboxes = (String) menuModel.getElementAt(i).getText();
+                            selectedCheckboxesIDs = database.getOneTableValue(stmt, "ingredient", "id", "name", selectedCheckboxes);
+                            Random num = new Random();
+                            
+                            Object[] inputVals = {num.nextInt(10000)+1, selectedCheckboxesIDs, menuItems.length};
+                            database.AddItem("ingredient_menu_item_join_table", stmt, inputVals);
+                        }
+                    }
+                }
+                catch(Exception e){
+                    JOptionPane.showMessageDialog(null,"Error accessing Database.");
+                }
+                try {
+                    connfunc.close();
+                    JOptionPane.showMessageDialog(null,"Connection Closed.");
+                } 
+                catch (Exception e) {
+                    JOptionPane.showMessageDialog(null,"Connection NOT Closed.");
+                }
+
             }
         });
 
         deleteItemButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent j) {
                 // TODO: remove item from menu_item
+                Connection connfunc = null;
+                String[] selectedIDs = new String[0];
+                try {
+                connfunc = DriverManager.getConnection(
+                    "jdbc:postgresql://csce-315-db.engr.tamu.edu/csce315331_09m_db",
+                    "csce315_909_zakborman",
+                    "542618xrad");
+                } 
+                catch (Exception e) {
+                    e.printStackTrace();
+                    System.err.println(e.getClass().getName()+": "+e.getMessage());
+                    System.exit(0);
+                }
+                JOptionPane.showMessageDialog(null,"Opened database successfully");
+                try{
+                    Statement stmt = connfunc.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+
+                    int count = 0;
+                    for(int i = 0; i < ingredients.length; i++){
+                         if(menuModel.getElementAt(i).isSelected() == true){
+                            count++;
+                        }
+                    }
+                
+                    selectedIDs = new String[count];
+                    for(int i = 0; i < ingredients.length; i++){
+                         if(menuModel.getElementAt(i).isSelected() == true){
+                            selectedIDs[i] = database.getOneTableValue(stmt, "ingredient", "id", "name", menuModel.getElementAt(i).getText());
+                        }
+                    }
+
+                    for(int i = 0; i < selectedIDs.length; i++){
+                        database.deleteItem(stmt, "ingredient_menu_item_join_table", "ingredient_id",(String) ((String) selectedIDs[i] + " AND menu_item_id = " + (String) database.getOneTableValue(stmt, "menu_item", "id", "name",(String) menuList.getSelectedValue())));
+                    }
+                }
+                catch(Exception e){
+                    JOptionPane.showMessageDialog(null,"Error accessing Database.");
+                }
+                try {
+                    connfunc.close();
+                    JOptionPane.showMessageDialog(null,"Connection Closed.");
+                } 
+                catch (Exception e) {
+                    JOptionPane.showMessageDialog(null,"Connection NOT Closed.");
+                }
                 
             }
         });
 
         menuPanel.add(menuPane);
         menuButtonPanel.add(addItemButton);
-        menuButtonPanel.add(Box.createVerticalStrut(10)); 
+        menuButtonPanel.add(Box.createVerticalStrut(10));
         menuButtonPanel.add(updateItemButton);
         menuButtonPanel.add(Box.createVerticalStrut(10));
         menuButtonPanel.add(deleteItemButton);

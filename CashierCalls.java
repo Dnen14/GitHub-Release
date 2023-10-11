@@ -7,10 +7,9 @@ public final class CashierCalls extends SQLCalls{
     /*
         @author Brandon Thomas
         @param ArrayList<MenuItem> items - list of menu items in the order
-        @param Customer c - customer that placed the order
         @throws no errors
     */
-    public static void submitOrder(ArrayList<MenuItem> items,Customer c){
+    public static void submitOrder(ArrayList<MenuItem> items){
         Connection conn = null;
         try {
         conn = DriverManager.getConnection(

@@ -10,7 +10,7 @@ public final class CashierCalls extends SQLCalls{
         @param items - list of menu items in the order
         @param c - customer that placed the order
     */
-    public static void submitOrder(ArrayList<MenuItem> items,Customer c){
+    public static void submitOrder(ArrayList<MenuItem> items, Customer C){
         Connection conn = null;
         try {
             //establish connection

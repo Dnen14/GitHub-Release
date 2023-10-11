@@ -48,4 +48,24 @@ public class Customer{
         _email = email;
     }
 
+    public long getId(){
+        return _id;
+    }
+
+    public String getName(){
+        return _name;
+    }
+
+    public String getEmail(){
+        return _email;
+    }
+
+    public boolean equals(Customer other){
+        boolean id_equals = _id == other.getId();
+        boolean name_equals = _name.equals(other.getName());
+        boolean email_equals = _email.equals(other.getEmail());
+
+        return id_equals && name_equals && email_equals;
+    }
+
 }

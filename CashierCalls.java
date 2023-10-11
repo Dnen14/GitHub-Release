@@ -11,19 +11,7 @@ public final class CashierCalls extends SQLCalls{
         @param c - customer that placed the order
     */
     public static void submitOrder(ArrayList<MenuItem> items, Customer C){
-        Connection conn = null;
-        try {
-            //establish connection
-            conn = DriverManager.getConnection(
-                "jdbc:postgresql://csce-315-db.engr.tamu.edu/csce315331_09m_db",
-                "csce315_909_bat2492",
-                "BT2415");
-        } 
-        catch (Exception e) {
-            e.printStackTrace();
-            System.err.println(e.getClass().getName()+": "+e.getMessage());
-            System.exit(0);
-        }
+        Connection conn = getConnection();
         try{
             // create a statement
             Statement st = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -37,13 +25,16 @@ public final class CashierCalls extends SQLCalls{
             for(MenuItem item: items){
                 call.AddItem("menu_item_order_join_table",st,new Object[]{getNextMenuOrderJoinId(),item.getId(),order_id});
             }
+
+            // add the customer to the customer table
+
         }
         catch (Exception e){
             System.out.println("DB Querry Failed");
             System.out.println(e.getClass().getName() + ": " + e.getMessage());
         }
-
     }
+
     /*
         @author Brandon Thomas
         @return a long containing the next available id of an order
@@ -81,23 +72,10 @@ public final class CashierCalls extends SQLCalls{
         @author Brandon Thomas
         @param table - the table to get the next available id from
         @return a long containing the next available id from the table
-        @throws no errors
     */
     public static long getNextTableId(String table){
-        Connection conn = null;
+        Connection conn = getConnection();
         long id = -1;
-        try {
-            //establish connection
-            conn = DriverManager.getConnection(
-                "jdbc:postgresql://csce-315-db.engr.tamu.edu/csce315331_09m_db",
-                "csce315_909_bat2492",
-                "BT2415");
-        } 
-        catch (Exception e) {
-            e.printStackTrace();
-            System.err.println(e.getClass().getName()+": "+e.getMessage());
-            System.exit(0);
-        }
         try{
             // create statement
             Statement st = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -122,17 +100,7 @@ public final class CashierCalls extends SQLCalls{
     */
     public static ArrayList<MenuItem> getMenuItems(){
         Connection conn = null;
-        try {
-        conn = DriverManager.getConnection(
-            "jdbc:postgresql://csce-315-db.engr.tamu.edu/csce315331_09m_db",
-            "csce315_909_bat2492",
-            "BT2415");
-        } 
-        catch (Exception e) {
-            e.printStackTrace();
-            System.err.println(e.getClass().getName()+": "+e.getMessage());
-            System.exit(0);
-        }
+        
         ArrayList<ArrayList<String>> items = new ArrayList<ArrayList<String>>();
         try{
             Statement st = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -145,24 +113,31 @@ public final class CashierCalls extends SQLCalls{
             System.out.println("DB Querry Failed");
             System.out.println(e.getClass().getName() + ": " + e.getMessage());
         }
+
         ArrayList<MenuItem> ret = new ArrayList<MenuItem>();
-        for(ArrayList<String> string_menu_item: items){
-            MenuItem item = new MenuItem(Long.valueOf(string_menu_item.get(0)).longValue(),//id
-                                         string_menu_item.get(3),//name
-                                         Double.valueOf(string_menu_item.get(2)).doubleValue());//price
-            String size = string_menu_item.get(1);
-            ItemSize enum_size = ItemSize.Medium;
-            if( size.toLowerCase().equals("small")){
-                enum_size = ItemSize.Small;
+        try{
+            for(ArrayList<String> string_menu_item: items){
+                MenuItem item = new MenuItem(Long.valueOf(string_menu_item.get(0)).longValue(),//id
+                                             string_menu_item.get(3),//name
+                                             Double.valueOf(string_menu_item.get(2)).doubleValue());//price
+                String size = string_menu_item.get(1);
+                ItemSize enum_size = ItemSize.Medium;
+                if( size.toLowerCase().equals("small")){
+                    enum_size = ItemSize.Small;
+                }
+                else if( size.toLowerCase().equals("large")){
+                    enum_size = ItemSize.Large;
+                }
+                else{
+                    enum_size = ItemSize.Medium;
+                }
+                item.setSize(enum_size);
+                ret.add(item);
             }
-            else if( size.toLowerCase().equals("large")){
-                enum_size = ItemSize.Large;
-            }
-            else{
-                enum_size = ItemSize.Medium;
-            }
-            item.setSize(enum_size);
-            ret.add(item);
+        }
+        catch(Exception e){
+            System.out.println("Could not parse out a Menu Item");
+            System.out.println(e.getClass().getName() + ": " + e.getMessage());
         }
         
         
@@ -171,8 +146,37 @@ public final class CashierCalls extends SQLCalls{
 
     /*
         @author Brandon Thomas
+        @return ArrayList<Customer> a list containing all of the customers in the db
+    */
+    public ArrayList<Customer> getCustomers(){
+        Connection conn = getConnection();
+        ArrayList<ArrayList<String>> str_customers = new ArrayList<ArrayList<String>>();
+        try{
+            Statement st = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            SQLCalls s = new SQLCalls();
+
+            str_customers = s.ViewTable(st,new String[]{"id","_name","email"});
+        }
+        ArrayList<Customer> customers = new ArrayList<Customer>();
+        try{
+            for(ArrayList<String> str_customer: str_customers){
+                Customer cus = new Customer(Long.valueOf(str_customer.get(0)).longValue(),//Id
+                                            str_customer.get(1),//Name
+                                            str_customer.get(2));//email
+                customers.add(cus);
+            }
+        }
+        catch(Exception e){
+            System.out.println("Could not parse out a Customer");
+            System.out.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+        return customers;
+    }
+
+    /*
+        @author Brandon Thomas
         @param ArrayList<MenuItem> items - a list of all of the items in an order
-        @returns double - total price of all of the items in the list
+        @return double - total price of all of the items in the list
     */
     public static double getTotal(ArrayList<MenuItem> items){
         double total = 0.0;
@@ -180,6 +184,22 @@ public final class CashierCalls extends SQLCalls{
             total += item.getPrice();
         }
         return total;
+    }
+
+    public Connection getConnection(){
+        Connection conn = null;
+        try {
+            conn = DriverManager.getConnection(
+                "jdbc:postgresql://csce-315-db.engr.tamu.edu/csce315331_09m_db",
+                "csce315_909_bat2492",
+                "BT2415");
+        } 
+        catch (Exception e) {
+            e.printStackTrace();
+            System.err.println(e.getClass().getName()+": "+e.getMessage());
+            System.exit(0);
+        }
+        return conn;
     }
 } 
 

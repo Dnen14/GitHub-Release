@@ -49,6 +49,34 @@ public class Cashier_GUI extends JFrame {
         frame.add(totalLabel);
         
         frame.setLayout(new GridLayout(1, 2)); // Arrange panels side by side
+
+        // Create a panel for checkout and cancel buttons
+        JPanel checkoutPanel = new JPanel();
+        JButton checkoutButton = new JButton("Checkout");
+        JButton cancelButton = new JButton("Cancel");
+
+        checkoutButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Call the submitOrder method with the orderSummary
+                CashierCalls.submitOrder(orderSummary);
+                clearOrderSummary();
+            }
+        });
+
+        cancelButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                clearOrderSummary();
+            }
+        });
+
+        checkoutPanel.add(checkoutButton);
+        checkoutPanel.add(cancelButton);
+        frame.add(checkoutPanel);
+        
+        frame.setVisible(true);
+
         frame.setVisible(true);
 
         //closing the connection
@@ -97,27 +125,36 @@ public class Cashier_GUI extends JFrame {
         DecimalFormat df = new DecimalFormat("#.00");
         totalLabel.setText("Total: $" + df.format(total));
 
-        if (!orderSummary.isEmpty()) {
-            for (MenuItem menuItem : orderSummary) {
-                JPanel itemPanel = new JPanel();
-                JButton removeButton = new JButton("X");
-                removeButton.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        // Remove the selected item from the order summary
-                        orderSummary.remove(menuItem);
-                        updateOrderSummary();
-                    }
-                });
-                JLabel itemLabel = new JLabel(menuItem.getName() + " - $" + menuItem.getPrice());
-                itemPanel.add(removeButton);
-                itemPanel.add(itemLabel);
-                orderSummaryPanel.add(itemPanel);
-                
-            }
+        if (orderSummary.isEmpty()) {
+            orderSummaryPanel.add(new JLabel("No items in order summary"));
+            orderSummaryPanel.revalidate();
+            orderSummaryPanel.repaint();
+            return;
+        }
+
+        
+        for (MenuItem menuItem : orderSummary) {
+            
+            JPanel itemPanel = new JPanel();
+            JButton removeButton = new JButton("X");
+            removeButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    // Remove the selected item from the order summary
+                    orderSummary.remove(menuItem);
+                    updateOrderSummary();
+                }
+            });
+            JLabel itemLabel = new JLabel(menuItem.getName() + " - $" + menuItem.getPrice());
+            itemPanel.add(removeButton);
+            itemPanel.add(itemLabel);
+            orderSummaryPanel.add(itemPanel);
+            
         }
         
+        
         orderSummaryPanel.revalidate(); // Refresh the order summary panel
+        orderSummaryPanel.repaint();
         
     }
 
@@ -164,5 +201,10 @@ public class Cashier_GUI extends JFrame {
 
     private static ArrayList<MenuItem> getMenuItems() {
         return CashierCalls.getMenuItems();
+    }
+
+    private static void clearOrderSummary() {
+        orderSummary.clear();
+        updateOrderSummary();
     }
 }

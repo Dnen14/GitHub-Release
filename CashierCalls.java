@@ -56,7 +56,7 @@ public final class CashierCalls extends SQLCalls{
             }
 
             // add the order customer relation to the join table
-            // call.AddItem("customer_order_join_table",st,new String[]{String.valueOf(getNextCustomerOrderJoinId()),String.valueOf(order_id),String.valueOf(c.getId())});   
+            call.AddItem("customer_order_join_table",st,new String[]{String.valueOf(getNextCustomerOrderJoinId()),String.valueOf(order_id),String.valueOf(c.getId())});   
 
         }
         catch (Exception e){

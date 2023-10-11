@@ -11,7 +11,18 @@ public final class CashierCalls extends SQLCalls{
         @param c - customer that placed the order
     */
     public static void submitOrder(ArrayList<MenuItem> items, Customer C){
-        Connection conn = getConnection();
+        Connection conn = null;
+        try {
+            conn = DriverManager.getConnection(
+                "jdbc:postgresql://csce-315-db.engr.tamu.edu/csce315331_09m_db",
+                "csce315_909_bat2492",
+                "BT2415");
+        } 
+        catch (Exception e) {
+            e.printStackTrace();
+            System.err.println(e.getClass().getName()+": "+e.getMessage());
+            System.exit(0);
+        }
         try{
             // create a statement
             Statement st = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -74,7 +85,18 @@ public final class CashierCalls extends SQLCalls{
         @return a long containing the next available id from the table
     */
     public static long getNextTableId(String table){
-        Connection conn = getConnection();
+        Connection conn = null;
+        try {
+            conn = DriverManager.getConnection(
+                "jdbc:postgresql://csce-315-db.engr.tamu.edu/csce315331_09m_db",
+                "csce315_909_bat2492",
+                "BT2415");
+        } 
+        catch (Exception e) {
+            e.printStackTrace();
+            System.err.println(e.getClass().getName()+": "+e.getMessage());
+            System.exit(0);
+        }
         long id = -1;
         try{
             // create statement
@@ -165,7 +187,18 @@ public final class CashierCalls extends SQLCalls{
         @return ArrayList<Customer> a list containing all of the customers in the db
     */
     public static ArrayList<Customer> getCustomers(){
-        Connection conn = getConnection();
+        Connection conn = null;
+        try {
+            conn = DriverManager.getConnection(
+                "jdbc:postgresql://csce-315-db.engr.tamu.edu/csce315331_09m_db",
+                "csce315_909_bat2492",
+                "BT2415");
+        } 
+        catch (Exception e) {
+            e.printStackTrace();
+            System.err.println(e.getClass().getName()+": "+e.getMessage());
+            System.exit(0);
+        }
         ArrayList<ArrayList<String>> str_customers = new ArrayList<ArrayList<String>>();
         try{
             Statement st = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -208,22 +241,6 @@ public final class CashierCalls extends SQLCalls{
             total += item.getPrice();
         }
         return total;
-    }
-
-    public static Connection getConnection(){
-        Connection conn = null;
-        try {
-            conn = DriverManager.getConnection(
-                "jdbc:postgresql://csce-315-db.engr.tamu.edu/csce315331_09m_db",
-                "csce315_909_bat2492",
-                "BT2415");
-        } 
-        catch (Exception e) {
-            e.printStackTrace();
-            System.err.println(e.getClass().getName()+": "+e.getMessage());
-            System.exit(0);
-        }
-        return conn;
     }
 } 
 

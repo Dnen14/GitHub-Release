@@ -20,8 +20,8 @@ public class Manager_GUI extends JFrame {
         try {
         conn = DriverManager.getConnection(
             "jdbc:postgresql://csce-315-db.engr.tamu.edu/csce315331_09m_db",
-            "csce315_909_NETID",
-            "PASSWORD");
+            "csce315_909_rahul_2003",
+            "Rs03252003#");
         } 
         catch (Exception e) {
             e.printStackTrace();

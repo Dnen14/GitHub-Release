@@ -56,7 +56,7 @@ public final class CashierCalls extends SQLCalls{
             }
 
             // add the order customer relation to the join table
-            call.AddItem("customer_order_join_table",st,new String[]{String.valueOf(getNextCustomerOrderJoinId()),String.valueOf(order_id),String.valueOf(c.getId())});   
+            // call.AddItem("customer_order_join_table",st,new String[]{String.valueOf(getNextCustomerOrderJoinId()),String.valueOf(order_id),String.valueOf(c.getId())});   
 
         }
         catch (Exception e){
@@ -234,10 +234,10 @@ public final class CashierCalls extends SQLCalls{
         ArrayList<Customer> customers = new ArrayList<Customer>();
         try{
             for(ArrayList<String> str_customer: str_customers){
-                System.out.println("printing Customer: ");
-                System.out.println("\tid: " + str_customer.get(0));
-                System.out.println("\tname: " + str_customer.get(1));
-                System.out.println("\temail: " + str_customer.get(2));
+                // System.out.println("printing Customer: ");
+                // System.out.println("\tid: " + str_customer.get(0));
+                // System.out.println("\tname: " + str_customer.get(1));
+                // System.out.println("\temail: " + str_customer.get(2));
                 Customer cus = new Customer(Long.valueOf(str_customer.get(0)).longValue(),//Id
                                             str_customer.get(1),//Name
                                             str_customer.get(2));//email

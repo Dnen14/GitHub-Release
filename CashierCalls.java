@@ -5,18 +5,19 @@ import java.time.*;
 public final class CashierCalls extends SQLCalls{
     
     /*
+        submits an order to the SQL database and adds all of the proper join table items
         @author Brandon Thomas
-        @param ArrayList<MenuItem> items - list of menu items in the order
-        @param Customer c - customer that placed the order
-        @throws no errors
+        @param items - list of menu items in the order
+        @param c - customer that placed the order
     */
     public static void submitOrder(ArrayList<MenuItem> items,Customer c){
         Connection conn = null;
         try {
-        conn = DriverManager.getConnection(
-            "jdbc:postgresql://csce-315-db.engr.tamu.edu/csce315331_09m_db",
-            "csce315_909_bat2492",
-            "BT2415");
+            //establish connection
+            conn = DriverManager.getConnection(
+                "jdbc:postgresql://csce-315-db.engr.tamu.edu/csce315331_09m_db",
+                "csce315_909_bat2492",
+                "BT2415");
         } 
         catch (Exception e) {
             e.printStackTrace();
@@ -24,10 +25,15 @@ public final class CashierCalls extends SQLCalls{
             System.exit(0);
         }
         try{
+            // create a statement
             Statement st = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             SQLCalls call = new SQLCalls();
             long order_id = getNextOrderId();
+
+            //execute the query for the order table
             call.AddItem("order_table",st,new Object[]{order_id,getTotal(items),LocalDateTime.now().toString()});
+
+            //fill the menu item order join table
             for(MenuItem item: items){
                 call.AddItem("menu_item_order_join_table",st,new Object[]{getNextMenuOrderJoinId(),item.getId(),order_id});
             }
@@ -47,10 +53,11 @@ public final class CashierCalls extends SQLCalls{
         Connection conn = null;
         long id = -1;
         try {
-        conn = DriverManager.getConnection(
-            "jdbc:postgresql://csce-315-db.engr.tamu.edu/csce315331_09m_db",
-            "csce315_909_bat2492",
-            "BT2415");
+            //establish connection
+            conn = DriverManager.getConnection(
+                "jdbc:postgresql://csce-315-db.engr.tamu.edu/csce315331_09m_db",
+                "csce315_909_bat2492",
+                "BT2415");
         } 
         catch (Exception e) {
             e.printStackTrace();
@@ -58,9 +65,13 @@ public final class CashierCalls extends SQLCalls{
             System.exit(0);
         }
         try{
+            // create statement
             Statement st = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             
+            // make the query
             ResultSet rs = st.executeQuery("SELECT MAX(id) as max_id FROM order_table");
+
+            // get value from query
             rs.next();
             id = Long.valueOf(rs.getString("max_id")).longValue();
         }
@@ -71,14 +82,19 @@ public final class CashierCalls extends SQLCalls{
         return id + 1;
     }
 
+    /*
+        @author Brandon Thomas
+        @return long containing the next available id in the menu item order join table of the database
+    */
     public static long getNextMenuOrderJoinId(){
         Connection conn = null;
         long id = -1;
         try {
-        conn = DriverManager.getConnection(
-            "jdbc:postgresql://csce-315-db.engr.tamu.edu/csce315331_09m_db",
-            "csce315_909_bat2492",
-            "BT2415");
+            //establish the connection
+            conn = DriverManager.getConnection(
+                "jdbc:postgresql://csce-315-db.engr.tamu.edu/csce315331_09m_db",
+                "csce315_909_bat2492",
+                "BT2415");
         } 
         catch (Exception e) {
             e.printStackTrace();
@@ -86,9 +102,13 @@ public final class CashierCalls extends SQLCalls{
             System.exit(0);
         }
         try{
+            //create the statement
             Statement st = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             
+            // make the query
             ResultSet rs = st.executeQuery("SELECT MAX(id) as max_id FROM menu_item_order_join_table");
+
+            //get value from query
             rs.next();
             id = Long.valueOf(rs.getString("max_id")).longValue();
         }
@@ -99,6 +119,10 @@ public final class CashierCalls extends SQLCalls{
         return id + 1;
     }
 
+    /*
+        @author Brandon Thomas
+        @returns all of the menu items in the database  
+    */
     public static ArrayList<MenuItem> getMenuItems(){
         Connection conn = null;
         try {
@@ -152,7 +176,6 @@ public final class CashierCalls extends SQLCalls{
         @author Brandon Thomas
         @param ArrayList<MenuItem> items - a list of all of the items in an order
         @returns double - total price of all of the items in the list
-        @throws no errors
     */
     public static double getTotal(ArrayList<MenuItem> items){
         double total = 0.0;

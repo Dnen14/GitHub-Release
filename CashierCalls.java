@@ -30,11 +30,11 @@ public final class CashierCalls extends SQLCalls{
             long order_id = getNextOrderId();
 
             //execute the query for the order table
-            call.AddItem("order_table",st,new Object[]{order_id,getTotal(items),LocalDateTime.now().toString()});
+            call.AddItem("order_table",st,new String[]{String.valueOf(order_id),String.valueOf(getTotal(items)),LocalDateTime.now().toString()});
 
             //fill the menu item order join table
             for(MenuItem item: items){
-                call.AddItem("menu_item_order_join_table",st,new Object[]{getNextMenuOrderJoinId(),item.getId(),order_id});
+                call.AddItem("menu_item_order_join_table",st,new String[]{String.valueOf(getNextMenuOrderJoinId()),String.valueOf(item.getId()),String.valueOf(order_id)});
             }
 
             // add the customer to the customer table

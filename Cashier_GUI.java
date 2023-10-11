@@ -124,13 +124,6 @@ public class Cashier_GUI extends JFrame {
         DecimalFormat df = new DecimalFormat("#.00");
         totalLabel.setText("Total: $" + df.format(total));
 
-        if (orderSummary.isEmpty()) {
-            orderSummaryPanel.add(new JLabel("Select an item to add to the order"));
-            orderSummaryPanel.revalidate();
-            orderSummaryPanel.repaint();
-            return;
-        }
-
         
         for (MenuItem menuItem : orderSummary) {
             
@@ -149,6 +142,10 @@ public class Cashier_GUI extends JFrame {
             itemPanel.add(itemLabel);
             orderSummaryPanel.add(itemPanel);
             
+        }
+
+        if (orderSummary.isEmpty()) {
+            orderSummaryPanel.add(new JLabel("Select an item to add to the order"));
         }
         
         

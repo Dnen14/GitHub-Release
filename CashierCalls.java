@@ -100,6 +100,17 @@ public final class CashierCalls extends SQLCalls{
     */
     public static ArrayList<MenuItem> getMenuItems(){
         Connection conn = null;
+        try {
+            conn = DriverManager.getConnection(
+                "jdbc:postgresql://csce-315-db.engr.tamu.edu/csce315331_09m_db",
+                "csce315_909_bat2492",
+                "BT2415");
+        } 
+        catch (Exception e) {
+            e.printStackTrace();
+            System.err.println(e.getClass().getName()+": "+e.getMessage());
+            System.exit(0);
+        }
         
         ArrayList<ArrayList<String>> items = new ArrayList<ArrayList<String>>();
         try{

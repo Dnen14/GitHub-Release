@@ -58,9 +58,7 @@ public class Cashier_GUI extends JFrame {
         checkoutButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Call the submitOrder method with the orderSummary
-                CashierCalls.submitOrder(orderSummary);
-                clearOrderSummary();
+                showCustomerInfoDialog();
             }
         });
 
@@ -96,6 +94,7 @@ public class Cashier_GUI extends JFrame {
         ArrayList<MenuItem> menuItems = getMenuItems();
 
         for (MenuItem menuItem : menuItems) {
+            System.out.println(menuItem.getName());
             JButton itemButton = new JButton(menuItem.getName() + " - $" + menuItem.getPrice());
             itemButton.addActionListener(new ActionListener() {
                 @Override
@@ -156,6 +155,35 @@ public class Cashier_GUI extends JFrame {
         orderSummaryPanel.revalidate(); // Refresh the order summary panel
         orderSummaryPanel.repaint();
         
+    }
+
+    private static void showCustomerInfoDialog() {
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(3, 2));
+
+        JTextField nameField = new JTextField(20);
+        JTextField emailField = new JTextField(20);
+
+        panel.add(new JLabel("Customer Name:"));
+        panel.add(nameField);
+        panel.add(new JLabel("Customer Email:"));
+        panel.add(emailField);
+
+        int result = JOptionPane.showConfirmDialog(null, panel, "Customer Information", JOptionPane.OK_CANCEL_OPTION);
+
+        if (result == JOptionPane.OK_OPTION) {
+            String customerName = nameField.getText();
+            String customerEmail = emailField.getText();
+            // System.out.println(customerName + " " + customerEmail);
+
+            if (!customerName.isEmpty() && !customerEmail.isEmpty()) {
+                Customer customer = new Customer(customerName, customerEmail);
+                CashierCalls.submitOrder(orderSummary, customer);
+                clearOrderSummary();
+            } else {
+                JOptionPane.showMessageDialog(null, "Please enter customer name and email.");
+            }
+        }
     }
 
     /* Want to implement this later for customizing menu items */

@@ -15,8 +15,17 @@ public class Cashier_GUI extends JFrame {
     private static ArrayList<MenuItem> orderSummary = new ArrayList<>();
     private static JPanel orderSummaryPanel;
     private static JLabel totalLabel;
-    public static void main(String[] args)
-    {
+    private static JFrame cashierFrame;
+    private static JFrame managerFrame;
+
+    public static void main(String[] args) {
+        // Create the Cashier POS System frame
+        cashierFrame = createCashierFrame();
+        cashierFrame.setVisible(true);
+    }
+
+    public static JFrame createCashierFrame() {
+
         //Building the connection
         try {
         conn = DriverManager.getConnection(
@@ -30,6 +39,7 @@ public class Cashier_GUI extends JFrame {
             System.exit(0);
         }
         JOptionPane.showMessageDialog(null,"Opened database successfully");
+        
 
         JFrame frame = new JFrame("Cashier POS System");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -57,9 +67,20 @@ public class Cashier_GUI extends JFrame {
         JPanel checkoutPanel = createCheckoutPanel();
         frame.add(checkoutPanel, BorderLayout.SOUTH);
 
-        
-        
-        frame.setVisible(true);
+        // Add a button to switch to the DB GUI
+        JButton switchToManagerGUIButton = new JButton("Switch to Manager View");
+        switchToManagerGUIButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (managerFrame == null) {
+                    managerFrame = Manager_GUI.createManagerFrame();
+                }
+                frame.dispose(); // Close the current frame
+                managerFrame.setVisible(true); // Show the DB GUI frame
+            }
+        });
+
+        frame.add(switchToManagerGUIButton, BorderLayout.NORTH);
 
         //closing the connection
         try {
@@ -69,6 +90,8 @@ public class Cashier_GUI extends JFrame {
         catch (Exception e) {
             JOptionPane.showMessageDialog(null,"Connection NOT Closed.");
         }
+        
+        return frame;   
     }
 
     private static JPanel createMenuPanel() {

@@ -10,23 +10,27 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 public class Manager_GUI extends JFrame {
+    private static Connection conn = null;
+    private static JFrame cashierFrame;
+    private static JFrame managerFrame;
     public static Object[][] inventory;
     public static String[] ingredients = new String[0];
     public static String[] menuItems = new String[0];
-    public static void main(String[] args)
-    {
+
+    public static void main(String[] args) {
+        // Create the Manager POS System frame
+        managerFrame = createManagerFrame();
+        managerFrame.setVisible(true);    
+    }
+
+    public static JFrame createManagerFrame() {    
+
         //Building the connection
-        Connection conn = null;
         try {
         conn = DriverManager.getConnection(
             "jdbc:postgresql://csce-315-db.engr.tamu.edu/csce315331_09m_db",
-<<<<<<< HEAD
             "csce315_909_rahul_2003",
             "Rs03252003#");
-=======
-            "csce315_909_zakborman",
-            "542618xrad");
->>>>>>> d16ebf1fcb0742e53b8e1dd1acd4a7e68e7c984a
         } 
         catch (Exception e) {
             e.printStackTrace();
@@ -51,10 +55,10 @@ public class Manager_GUI extends JFrame {
             ingredients = database.getSpecifiedTableValues(stmt, "ingredient", "name");
 
             conn.close();
-            JOptionPane.showMessageDialog(null,"Connection Closed.");
+            // JOptionPane.showMessageDialog(null,"Connection Closed.");
         } 
         catch (Exception e) {
-            JOptionPane.showMessageDialog(null,"Error accessing Database.");
+            JOptionPane.showMessageDialog(null,"Error accessing Database 1.");
         }
         JFrame frame = new JFrame("DB GUI");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -112,7 +116,7 @@ public class Manager_GUI extends JFrame {
                     database.UpdateTable(stmt, quantityField.getText(), "ingredient", "quantity", "name", ingredientField.getText());
                 }
                 catch(Exception e){
-                    JOptionPane.showMessageDialog(null,"Error accessing Database.");
+                    JOptionPane.showMessageDialog(null,"Error accessing Database 2.");
                 }
                 try {
                     connfunc.close();
@@ -192,7 +196,7 @@ public class Manager_GUI extends JFrame {
                         }
                     }
                     catch(Exception e){
-                        JOptionPane.showMessageDialog(null,"Error accessing Database.");
+                        JOptionPane.showMessageDialog(null,"Error accessing Database 3.");
                     }
                     try {
                         connfunc.close();
@@ -285,7 +289,7 @@ public class Manager_GUI extends JFrame {
                     }
                 }
                 catch(Exception e){
-                    JOptionPane.showMessageDialog(null,"Error accessing Database.");
+                    JOptionPane.showMessageDialog(null,"Error accessing Database 4.");
                 }
                 try {
                     connfunc.close();
@@ -336,7 +340,7 @@ public class Manager_GUI extends JFrame {
                     }
                 }
                 catch(Exception e){
-                    JOptionPane.showMessageDialog(null,"Error accessing Database.");
+                    JOptionPane.showMessageDialog(null,"Error accessing Database 5.");
                 }
                 try {
                     connfunc.close();
@@ -388,7 +392,7 @@ public class Manager_GUI extends JFrame {
                     }
                 }
                 catch(Exception e){
-                    JOptionPane.showMessageDialog(null,"Error accessing Database.");
+                    JOptionPane.showMessageDialog(null,"Error accessing Database 6.");
                 }
                 try {
                     connfunc.close();
@@ -422,7 +426,21 @@ public class Manager_GUI extends JFrame {
         mainPanel.add(menuPanel);
 
         frame.add(mainPanel);
-        frame.setVisible(true);
+
+        // Add a button to switch to the DB GUI
+        JButton switchToCashierGUIButton = new JButton("Switch to Cashier View");
+        switchToCashierGUIButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (cashierFrame == null) {
+                    cashierFrame = Cashier_GUI.createCashierFrame();
+                }
+                frame.dispose(); // Close the current frame
+                cashierFrame.setVisible(true); // Show the DB GUI frame
+            }
+        });
+
+        frame.add(switchToCashierGUIButton, BorderLayout.NORTH);
 
         //closing the connection
         try {
@@ -432,6 +450,8 @@ public class Manager_GUI extends JFrame {
         catch (Exception e) {
             JOptionPane.showMessageDialog(null,"Connection NOT Closed.");
         }
+
+        return frame;
     }
 }
 

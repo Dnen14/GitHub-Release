@@ -106,8 +106,10 @@ public final class CashierCalls extends SQLCalls{
             ResultSet rs = st.executeQuery("SELECT MAX(id) as max_id FROM " + table);
 
             // get value from query
-            rs.next();
-            id = Long.valueOf(rs.getString("max_id")).longValue();
+            if(rs.next()){
+                id = Long.valueOf(rs.getString("max_id")).longValue();
+            }
+            
         }
         catch (Exception e){
             System.out.println("DB Querry Failed");

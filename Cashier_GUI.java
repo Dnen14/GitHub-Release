@@ -43,38 +43,22 @@ public class Cashier_GUI extends JFrame {
 
         //Create panel for total
         totalLabel = new JLabel("Total: $0.00");
-        
-        frame.add(menuPanel);
-        frame.add(orderSummaryPanel);
-        frame.add(totalLabel);
-        
-        frame.setLayout(new GridLayout(1, 2)); // Arrange panels side by side
+
+        //Arrange the panels
+        JPanel leftPanel = new JPanel();
+        leftPanel.setLayout(new BorderLayout());
+        leftPanel.add(orderSummaryPanel, BorderLayout.WEST);
+        leftPanel.add(totalLabel, BorderLayout.SOUTH);
+
+        frame.add(menuPanel, BorderLayout.EAST);
+        frame.add(leftPanel, BorderLayout.CENTER);
 
         // Create a panel for checkout and cancel buttons
-        JPanel checkoutPanel = new JPanel();
-        JButton checkoutButton = new JButton("Checkout");
-        JButton cancelButton = new JButton("Clear");
+        JPanel checkoutPanel = createCheckoutPanel();
+        frame.add(checkoutPanel, BorderLayout.SOUTH);
 
-        checkoutButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                showCustomerInfoDialog();
-            }
-        });
-
-        cancelButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                clearOrderSummary();
-            }
-        });
-
-        checkoutPanel.add(checkoutButton);
-        checkoutPanel.add(cancelButton);
-        frame.add(checkoutPanel);
         
-        frame.setVisible(true);
-
+        
         frame.setVisible(true);
 
         //closing the connection
@@ -89,7 +73,7 @@ public class Cashier_GUI extends JFrame {
 
     private static JPanel createMenuPanel() {
         JPanel menuPanel = new JPanel();
-        menuPanel.setLayout(new GridLayout(0, 1));
+        menuPanel.setLayout(new GridLayout(0, 3));
 
         ArrayList<MenuItem> menuItems = getMenuItems();
 
@@ -113,7 +97,33 @@ public class Cashier_GUI extends JFrame {
     private static JPanel createOrderSummaryPanel() {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.add(new JLabel("Select an item to add to the order"));
         return panel;
+    }
+
+    private static JPanel createCheckoutPanel() {
+        JPanel checkoutPanel = new JPanel();
+        JButton checkoutButton = new JButton("Checkout");
+        JButton cancelButton = new JButton("Clear");
+
+        checkoutButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showCustomerInfoDialog();
+            }
+        });
+
+        cancelButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                clearOrderSummary();
+            }
+        });
+
+        checkoutPanel.add(checkoutButton);
+        checkoutPanel.add(cancelButton);
+
+        return checkoutPanel;
     }
 
     private static void updateOrderSummary() {
@@ -123,13 +133,6 @@ public class Cashier_GUI extends JFrame {
         double total = orderSummary.stream().mapToDouble(MenuItem::getPrice).sum();
         DecimalFormat df = new DecimalFormat("#.00");
         totalLabel.setText("Total: $" + df.format(total));
-
-        if (orderSummary.isEmpty()) {
-            orderSummaryPanel.add(new JLabel("Select an item to add to the order"));
-            orderSummaryPanel.revalidate();
-            orderSummaryPanel.repaint();
-            return;
-        }
 
         
         for (MenuItem menuItem : orderSummary) {
@@ -147,8 +150,13 @@ public class Cashier_GUI extends JFrame {
             JLabel itemLabel = new JLabel(menuItem.getName() + " - $" + menuItem.getPrice());
             itemPanel.add(removeButton);
             itemPanel.add(itemLabel);
+            itemPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
             orderSummaryPanel.add(itemPanel);
             
+        }
+
+        if (orderSummary.isEmpty()) {
+            orderSummaryPanel.add(new JLabel("Select an item to add to the order"));
         }
         
         

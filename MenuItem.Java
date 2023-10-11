@@ -1,7 +1,17 @@
 enum ItemSize{
-    Small,
-    Medium,
-    Large
+    Small("small"),
+    Medium("medium"),
+    Large("large");
+
+    private final String name;
+
+    ItemSize(String s){
+        name = s;
+    }
+
+    public String toString(){
+        return this.name;
+    }
 }
 
 public class MenuItem{

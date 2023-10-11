@@ -1,10 +1,36 @@
 import java.util.*;
 import java.sql.*;
+import java.time.*;
 
 public final class CashierCalls extends SQLCalls{
     
     
     public static void submitOrder(ArrayList<MenuItem> items){
+        Connection conn = null;
+        try {
+        conn = DriverManager.getConnection(
+            "jdbc:postgresql://csce-315-db.engr.tamu.edu/csce315331_09m_db",
+            "csce315_909_bat2492",
+            "BT2415");
+        } 
+        catch (Exception e) {
+            e.printStackTrace();
+            System.err.println(e.getClass().getName()+": "+e.getMessage());
+            System.exit(0);
+        }
+        try{
+            Statement st = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            SQLCalls call = new SQLCalls();
+            long order_id = getNextOrderId();
+            call.AddItem("order_table",st,new Object[]{order_id,getTotal(items),LocalDateTime.now().toString()});
+            for(MenuItem item: items){
+                call.AddItem("menu_item_order_join_table",st,new Object[]{getNextMenuOrderJoinId(),item.getId(),order_id});
+            }
+        }
+        catch (Exception e){
+            System.out.println("DB Querry Failed");
+            System.out.println(e.getClass().getName() + ": " + e.getMessage());
+        }
 
     }
 
@@ -34,7 +60,34 @@ public final class CashierCalls extends SQLCalls{
             System.out.println(e.getClass().getName() + ": " + e.getMessage());
         }
         return id + 1;
+    }
 
+    public static long getNextMenuOrderJoinId(){
+        Connection conn = null;
+        long id = -1;
+        try {
+        conn = DriverManager.getConnection(
+            "jdbc:postgresql://csce-315-db.engr.tamu.edu/csce315331_09m_db",
+            "csce315_909_bat2492",
+            "BT2415");
+        } 
+        catch (Exception e) {
+            e.printStackTrace();
+            System.err.println(e.getClass().getName()+": "+e.getMessage());
+            System.exit(0);
+        }
+        try{
+            Statement st = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            
+            ResultSet rs = st.executeQuery("SELECT MAX(id) as max_id FROM menu_item_order_join_table");
+            rs.next();
+            id = Long.valueOf(rs.getString("max_id")).longValue();
+        }
+        catch (Exception e){
+            System.out.println("DB Querry Failed");
+            System.out.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+        return id + 1;
     }
 
     public static ArrayList<MenuItem> getMenuItems(){
@@ -93,12 +146,5 @@ public final class CashierCalls extends SQLCalls{
         }
         return total;
     }
-
-    public static void main(String[] args){
-        System.out.println("next Order Id is: \n" + getNextOrderId());
-        ArrayList<MenuItem> items = getMenuItems();
-        System.out.println("number of MenuItems: " + items.size());
-    }
-
 } 
 

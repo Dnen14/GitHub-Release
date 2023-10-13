@@ -95,8 +95,8 @@ public class Manager_GUI extends JFrame {
                 int originalQuantity = -1;
                 for(int i = 0; i < inventory.length; i++){
                     for(int j = 0; j < inventory[i].length;j++){
-                        if(inventory[i][j] == ingredientField.getText()){
-                            originalQuantity = (int) inventory[i][j-2];
+                        if(inventory[i][j].equals(ingredientField.getText())){
+                            originalQuantity = Integer.valueOf(String.valueOf(inventory[i][j-2]));
                             break;
                         }
                     }
@@ -105,7 +105,7 @@ public class Manager_GUI extends JFrame {
                     }
                 }
 
-                int quantity = Integer.parseInt(ingredientField.getText()) + originalQuantity;
+                int quantity = Integer.valueOf(quantityField.getText()) + originalQuantity;
 
                 Connection connfunc = null;
                 try {

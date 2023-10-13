@@ -274,11 +274,10 @@ public class Manager_GUI extends JFrame {
                         selectedCheckboxesIDs[i] = database.getOneTableValue(stmt, "ingredient", "id", "name", selectedCheckboxes.get(i));
                     }
 
-                    values = new Object[4];
+                    values = new Object[3];
                     values[0] = menuItems.length + 2;
-                    values[1] = "medium";
-                    values[2] = priceField.getText();
-                    values[3] = menuItemField.getText();
+                    values[1] = priceField.getText();
+                    values[2] = menuItemField.getText();
                     Random num = new Random();
 
                     database.AddItem("menu_item", stmt, values);

@@ -10,9 +10,14 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 public class Manager_GUI extends JFrame {
+    private static String dbURL = "jdbc:postgresql://csce-315-db.engr.tamu.edu/csce315331_09m_db";
+    private static String username = "csce315_909_rahul_2003";
+    private static String password = "Rs03252003#";
+
     private static Connection conn = null;
     private static JFrame cashierFrame;
     private static JFrame managerFrame;
+
     public static Object[][] inventory;
     public static String[] ingredients = new String[0];
     public static String[] menuItems = new String[0];
@@ -27,39 +32,42 @@ public class Manager_GUI extends JFrame {
 
         //Building the connection
         try {
-        conn = DriverManager.getConnection(
-            "jdbc:postgresql://csce-315-db.engr.tamu.edu/csce315331_09m_db",
-            "csce315_909_rahul_2003",
-            "Rs03252003#");
+            conn = DriverManager.getConnection(dbURL, username, password);
         } 
         catch (Exception e) {
             e.printStackTrace();
             System.err.println(e.getClass().getName()+": "+e.getMessage());
             System.exit(0);
         }
-        JOptionPane.showMessageDialog(null,"Opened database successfully");
+        System.out.println("Opened database successfully");
 
         inventory = new Object[0][0];
         String[] columnNames = new String[0];
         SQLCalls database = new SQLCalls();
+
         try {
-            // TODO: back end, specifics below
             Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-
             columnNames = database.getColumnNames(stmt, "ingredient");
-
             inventory = database.ViewTable(stmt, columnNames, "ingredient").stream().map(x -> x.toArray(new String[0])).toArray(String[][]::new);
-
             menuItems = database.getSpecifiedTableValues(stmt, "menu_item", "name");
-
             ingredients = database.getSpecifiedTableValues(stmt, "ingredient", "name");
-
             conn.close();
             // JOptionPane.showMessageDialog(null,"Connection Closed.");
         } 
         catch (Exception e) {
             JOptionPane.showMessageDialog(null,"Error accessing Database 1.");
         }
+
+        //closing the connection
+        try {
+            conn.close();
+            System.out.println("Connection Closed.");
+        } 
+        catch (Exception e) {
+            JOptionPane.showMessageDialog(null,"Connection NOT Closed.");
+        }
+
+        // GUI Window
         JFrame frame = new JFrame("DB GUI");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1280, 720);
@@ -82,7 +90,7 @@ public class Manager_GUI extends JFrame {
 
         restockButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent k) {
-                // TODO: implement restock request
+                // restock request
                 // Update if ingredient already exists, else add new entry
                 int originalQuantity = -1;
                 for(int i = 0; i < inventory.length; i++){
@@ -97,20 +105,18 @@ public class Manager_GUI extends JFrame {
                     }
                 }
                 
-                int quantity = Integer.parseInt(ingredientField.getText()) + originalQuantity;
                 Connection connfunc = null;
                 try {
-                connfunc = DriverManager.getConnection(
-                    "jdbc:postgresql://csce-315-db.engr.tamu.edu/csce315331_09m_db",
-                    "csce315_909_zakborman",
-                    "542618xrad");
+                    connfunc = DriverManager.getConnection(dbURL, username, password);
                 } 
                 catch (Exception e) {
                     e.printStackTrace();
                     System.err.println(e.getClass().getName()+": "+e.getMessage());
                     System.exit(0);
                 }
-                JOptionPane.showMessageDialog(null,"Opened database successfully");
+
+                System.out.println("Opened database successfully");
+                
                 try{
                     Statement stmt = connfunc.createStatement();
                     database.UpdateTable(stmt, quantityField.getText(), "ingredient", "quantity", "name", ingredientField.getText());
@@ -118,22 +124,22 @@ public class Manager_GUI extends JFrame {
                 catch(Exception e){
                     JOptionPane.showMessageDialog(null,"Error accessing Database 2.");
                 }
+
                 try {
                     connfunc.close();
-                    JOptionPane.showMessageDialog(null,"Connection Closed.");
+                    System.out.println("Connection Closed.");
                 } 
                 catch (Exception e) {
                     JOptionPane.showMessageDialog(null,"Connection NOT Closed.");
                 }
-                }
+            }
         });
         
+        // Menu modification panel (lower row)
         JPanel menuPanel = new JPanel();
 
         JPanel menuButtonPanel = new JPanel();
         menuButtonPanel.setLayout(new BoxLayout(menuButtonPanel, BoxLayout.Y_AXIS));
-
-        // TODO: replace with name column of menu_item table
 
         JList<String> menuList = new JList<>(menuItems);
         JScrollPane menuPane = new JScrollPane(menuList);
@@ -148,8 +154,6 @@ public class Manager_GUI extends JFrame {
         addItemButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         updateItemButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         deleteItemButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        // TODO: replace with name column of ingredient table
         
 
         JList<JCheckBox> ingredientList = new JList<>();
@@ -173,18 +177,18 @@ public class Manager_GUI extends JFrame {
                     String menuID = "";
                     String[] selectedIngredientsID = new String[0];
                     String[] selectedIngredients = new String[0];
+                    
                     try {
-                    connfunc = DriverManager.getConnection(
-                        "jdbc:postgresql://csce-315-db.engr.tamu.edu/csce315331_09m_db",
-                        "csce315_909_zakborman",
-                        "542618xrad");
+                        connfunc = DriverManager.getConnection(dbURL, username, password);
                     } 
                     catch (Exception e) {
                         e.printStackTrace();
                         System.err.println(e.getClass().getName()+": "+e.getMessage());
                         System.exit(0);
                     }
-                    JOptionPane.showMessageDialog(null,"Opened database successfully");
+
+                    System.out.println("Opened database successfully");
+
                     try{
                         Statement stmt = connfunc.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
                         priceValue = database.getOneTableValue(stmt, "menu_item", "price", "name", (String) menuList.getSelectedValue());
@@ -198,9 +202,10 @@ public class Manager_GUI extends JFrame {
                     catch(Exception e){
                         JOptionPane.showMessageDialog(null,"Error accessing Database 3.");
                     }
+
                     try {
                         connfunc.close();
-                        JOptionPane.showMessageDialog(null,"Connection Closed.");
+                        System.out.println("Connection Closed.");
                     } 
                     catch (Exception e) {
                         JOptionPane.showMessageDialog(null,"Connection NOT Closed.");
@@ -209,11 +214,11 @@ public class Manager_GUI extends JFrame {
                     String SelectedValue = (String) menuList.getSelectedValue();
                     menuItemField.setText(SelectedValue); 
                     priceField.setText(priceValue);
+
                     for(int i = 0; i < ingredients.length; i++){
                         menuModel.getElementAt(i).setSelected(false);
                     }
 
-                    int count = 0;
                     for(int i = 0; i < ingredients.length; i++){
                         for(int k = 0; k < selectedIngredients.length; k++){
                             if(menuModel.getElementAt(i).getText().equals(selectedIngredients[k])){
@@ -243,27 +248,25 @@ public class Manager_GUI extends JFrame {
 
         addItemButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent j) {
-                // TODO: add item to menu_item
-                String itemID = "";
+                // add item to menu_item
                 Connection connfunc = null;
                 ArrayList<String> selectedCheckboxes = new ArrayList<String>();
                 Object[] values;
                 Object[] selectedCheckboxesIDs = new Object[0];
+
                 try {
-                connfunc = DriverManager.getConnection(
-                    "jdbc:postgresql://csce-315-db.engr.tamu.edu/csce315331_09m_db",
-                    "csce315_909_zakborman",
-                    "542618xrad");
+                    connfunc = DriverManager.getConnection(dbURL, username, password);
                 } 
                 catch (Exception e) {
                     e.printStackTrace();
                     System.err.println(e.getClass().getName()+": "+e.getMessage());
                     System.exit(0);
                 }
-                JOptionPane.showMessageDialog(null,"Opened database successfully");
+
+                System.out.println("Opened database successfully");
+
                 try{
                     Statement stmt = connfunc.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-                    String SelectedValue = (String) menuList.getSelectedValue();
                     for(int i = 0; i < ingredients.length; i++){
                         if(menuModel.getElementAt(i).isSelected() == true){
                             selectedCheckboxes.add((String) menuModel.getElementAt(i).getText());
@@ -290,9 +293,10 @@ public class Manager_GUI extends JFrame {
                 catch(Exception e){
                     JOptionPane.showMessageDialog(null,"Error accessing Database 4.");
                 }
+
                 try {
                     connfunc.close();
-                    JOptionPane.showMessageDialog(null,"Connection Closed.");
+                    System.out.println("Connection Closed.");
                 } 
                 catch (Exception e) {
                     JOptionPane.showMessageDialog(null,"Connection NOT Closed.");
@@ -306,18 +310,18 @@ public class Manager_GUI extends JFrame {
                 Connection connfunc = null;
                 String selectedCheckboxes = new String();
                 Object selectedCheckboxesIDs = new Object();
-                 try {
-                connfunc = DriverManager.getConnection(
-                    "jdbc:postgresql://csce-315-db.engr.tamu.edu/csce315331_09m_db",
-                    "csce315_909_zakborman",
-                    "542618xrad");
+
+                try {
+                    connfunc = DriverManager.getConnection(dbURL, username, password);
                 } 
                 catch (Exception e) {
                     e.printStackTrace();
                     System.err.println(e.getClass().getName()+": "+e.getMessage());
                     System.exit(0);
                 }
-                JOptionPane.showMessageDialog(null,"Opened database successfully");
+
+                System.out.println("Opened database successfully");
+
                 try{
                     Statement stmt = connfunc.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
                     database.UpdateTable(stmt,(Object) priceField.getText(), "menu_item", "price", "name", menuList.getSelectedValue());
@@ -341,9 +345,10 @@ public class Manager_GUI extends JFrame {
                 catch(Exception e){
                     JOptionPane.showMessageDialog(null,"Error accessing Database 5.");
                 }
+
                 try {
                     connfunc.close();
-                    JOptionPane.showMessageDialog(null,"Connection Closed.");
+                    System.out.println("Connection Closed.");
                 } 
                 catch (Exception e) {
                     JOptionPane.showMessageDialog(null,"Connection NOT Closed.");
@@ -357,18 +362,18 @@ public class Manager_GUI extends JFrame {
                 // TODO: remove item from menu_item
                 Connection connfunc = null;
                 String[] selectedIDs = new String[0];
+
                 try {
-                connfunc = DriverManager.getConnection(
-                    "jdbc:postgresql://csce-315-db.engr.tamu.edu/csce315331_09m_db",
-                    "csce315_909_zakborman",
-                    "542618xrad");
+                    connfunc = DriverManager.getConnection(dbURL, username, password);
                 } 
                 catch (Exception e) {
                     e.printStackTrace();
                     System.err.println(e.getClass().getName()+": "+e.getMessage());
                     System.exit(0);
                 }
-                JOptionPane.showMessageDialog(null,"Opened database successfully");
+
+                System.out.println("Opened database successfully");
+
                 try{
                     Statement stmt = connfunc.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 
@@ -393,9 +398,10 @@ public class Manager_GUI extends JFrame {
                 catch(Exception e){
                     JOptionPane.showMessageDialog(null,"Error accessing Database 6.");
                 }
+
                 try {
                     connfunc.close();
-                    JOptionPane.showMessageDialog(null,"Connection Closed.");
+                    System.out.println("Connection Closed.");
                 } 
                 catch (Exception e) {
                     JOptionPane.showMessageDialog(null,"Connection NOT Closed.");
@@ -440,15 +446,6 @@ public class Manager_GUI extends JFrame {
         });
 
         frame.add(switchToCashierGUIButton, BorderLayout.NORTH);
-
-        //closing the connection
-        try {
-            conn.close();
-            JOptionPane.showMessageDialog(null,"Connection Closed.");
-        } 
-        catch (Exception e) {
-            JOptionPane.showMessageDialog(null,"Connection NOT Closed.");
-        }
 
         return frame;
     }

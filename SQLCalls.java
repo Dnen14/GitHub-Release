@@ -96,7 +96,7 @@ public class SQLCalls{
         return null;
     }
 
-    //Views the a table for the manager
+    //Views the table for the manager
     //Runs a SQL command and then formats the results
     public ArrayList<ArrayList<String>> ViewTable(Statement stmt, String[] columnNames, String table){
 

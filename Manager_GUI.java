@@ -39,7 +39,8 @@ public class Manager_GUI extends JFrame {
             System.err.println(e.getClass().getName()+": "+e.getMessage());
             System.exit(0);
         }
-        System.out.println("Opened database successfully");
+
+        //System.out.println("Opened database successfully");
 
         inventory = new Object[0][0];
         String[] columnNames = new String[0];
@@ -61,7 +62,7 @@ public class Manager_GUI extends JFrame {
         //closing the connection
         try {
             conn.close();
-            System.out.println("Connection Closed.");
+            //System.out.println("Connection Closed.");
         } 
         catch (Exception e) {
             JOptionPane.showMessageDialog(null,"Connection NOT Closed.");
@@ -115,7 +116,7 @@ public class Manager_GUI extends JFrame {
                     System.exit(0);
                 }
 
-                System.out.println("Opened database successfully");
+                //System.out.println("Opened database successfully");
                 
                 try{
                     Statement stmt = connfunc.createStatement();
@@ -127,7 +128,7 @@ public class Manager_GUI extends JFrame {
 
                 try {
                     connfunc.close();
-                    System.out.println("Connection Closed.");
+                    //System.out.println("Connection Closed.");
                 } 
                 catch (Exception e) {
                     JOptionPane.showMessageDialog(null,"Connection NOT Closed.");
@@ -187,7 +188,7 @@ public class Manager_GUI extends JFrame {
                         System.exit(0);
                     }
 
-                    System.out.println("Opened database successfully");
+                    //System.out.println("Opened database successfully");
 
                     try{
                         Statement stmt = connfunc.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -205,7 +206,7 @@ public class Manager_GUI extends JFrame {
 
                     try {
                         connfunc.close();
-                        System.out.println("Connection Closed.");
+                        //System.out.println("Connection Closed.");
                     } 
                     catch (Exception e) {
                         JOptionPane.showMessageDialog(null,"Connection NOT Closed.");
@@ -263,7 +264,7 @@ public class Manager_GUI extends JFrame {
                     System.exit(0);
                 }
 
-                System.out.println("Opened database successfully");
+                //System.out.println("Opened database successfully");
 
                 try{
                     Statement stmt = connfunc.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -296,7 +297,7 @@ public class Manager_GUI extends JFrame {
 
                 try {
                     connfunc.close();
-                    System.out.println("Connection Closed.");
+                    //System.out.println("Connection Closed.");
                 } 
                 catch (Exception e) {
                     JOptionPane.showMessageDialog(null,"Connection NOT Closed.");
@@ -320,7 +321,7 @@ public class Manager_GUI extends JFrame {
                     System.exit(0);
                 }
 
-                System.out.println("Opened database successfully");
+                //System.out.println("Opened database successfully");
 
                 try{
                     Statement stmt = connfunc.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -348,7 +349,7 @@ public class Manager_GUI extends JFrame {
 
                 try {
                     connfunc.close();
-                    System.out.println("Connection Closed.");
+                    //System.out.println("Connection Closed.");
                 } 
                 catch (Exception e) {
                     JOptionPane.showMessageDialog(null,"Connection NOT Closed.");
@@ -372,7 +373,7 @@ public class Manager_GUI extends JFrame {
                     System.exit(0);
                 }
 
-                System.out.println("Opened database successfully");
+                //System.out.println("Opened database successfully");
 
                 try{
                     Statement stmt = connfunc.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -401,7 +402,7 @@ public class Manager_GUI extends JFrame {
 
                 try {
                     connfunc.close();
-                    System.out.println("Connection Closed.");
+                    //System.out.println("Connection Closed.");
                 } 
                 catch (Exception e) {
                     JOptionPane.showMessageDialog(null,"Connection NOT Closed.");

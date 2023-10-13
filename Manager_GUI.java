@@ -94,7 +94,7 @@ public class Manager_GUI extends JFrame {
                 // Update if ingredient already exists, else add new entry
                 int originalQuantity = -1;
                 for(int i = 0; i < inventory.length; i++){
-                    for(int j = 0; j < inventory[i].length;i++){
+                    for(int j = 0; j < inventory[i].length;j++){
                         if(inventory[i][j] == ingredientField.getText()){
                             originalQuantity = (int) inventory[i][j-2];
                             break;

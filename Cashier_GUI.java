@@ -38,7 +38,7 @@ public class Cashier_GUI extends JFrame {
             System.err.println(e.getClass().getName()+": "+e.getMessage());
             System.exit(0);
         }
-        JOptionPane.showMessageDialog(null,"Opened database successfully");
+        // JOptionPane.showMessageDialog(null,"Opened database successfully");
         
 
         JFrame frame = new JFrame("Cashier POS System");
@@ -85,7 +85,7 @@ public class Cashier_GUI extends JFrame {
         //closing the connection
         try {
             conn.close();
-            JOptionPane.showMessageDialog(null,"Connection Closed.");
+            // JOptionPane.showMessageDialog(null,"Connection Closed.");
         } 
         catch (Exception e) {
             JOptionPane.showMessageDialog(null,"Connection NOT Closed.");
@@ -157,6 +157,10 @@ public class Cashier_GUI extends JFrame {
         DecimalFormat df = new DecimalFormat("#.00");
         totalLabel.setText("Total: $" + df.format(total));
 
+        // Create a JPanel to hold the items
+         JPanel itemsPanel = new JPanel();
+         itemsPanel.setLayout(new BoxLayout(itemsPanel, BoxLayout.Y_AXIS));
+
         
         for (MenuItem menuItem : orderSummary) {
             
@@ -174,12 +178,18 @@ public class Cashier_GUI extends JFrame {
             itemPanel.add(removeButton);
             itemPanel.add(itemLabel);
             itemPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-            orderSummaryPanel.add(itemPanel);
+            itemsPanel.add(itemPanel);
             
         }
 
+        // Create a JScrollPane and add the itemsPanel to it
+        JScrollPane scrollPane = new JScrollPane(itemsPanel);
+        orderSummaryPanel.add(scrollPane);
+        orderSummaryPanel.setBackground(new Color(200, 200, 200));
+
         if (orderSummary.isEmpty()) {
-            orderSummaryPanel.add(new JLabel("Select an item to add to the order"));
+            JLabel label = new JLabel("<html><div style='text-align: center;'>Select an item to add to the order</div></html>");
+            orderSummaryPanel.add(label);
         }
         
         

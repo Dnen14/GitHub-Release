@@ -52,7 +52,6 @@ public class Manager_GUI extends JFrame {
             menuItems = database.getSpecifiedTableValues(stmt, "menu_item", "name");
             ingredients = database.getSpecifiedTableValues(stmt, "ingredient", "name");
             conn.close();
-            // JOptionPane.showMessageDialog(null,"Connection Closed.");
         } 
         catch (Exception e) {
             JOptionPane.showMessageDialog(null,"Error accessing Database 1.");
@@ -94,7 +93,7 @@ public class Manager_GUI extends JFrame {
                 // Update if ingredient already exists, else add new entry
                 int originalQuantity = -1;
                 for(int i = 0; i < inventory.length; i++){
-                    for(int j = 0; j < inventory[i].length;i++){
+                    for(int j = 0; j < inventory[i].length; j++){
                         if(inventory[i][j] == ingredientField.getText()){
                             originalQuantity = (int) inventory[i][j-2];
                             break;
@@ -104,7 +103,9 @@ public class Manager_GUI extends JFrame {
                         break;
                     }
                 }
-                
+
+                int quantity = Integer.parseInt(ingredientField.getText()) + originalQuantity;
+
                 Connection connfunc = null;
                 try {
                     connfunc = DriverManager.getConnection(dbURL, username, password);
@@ -119,7 +120,7 @@ public class Manager_GUI extends JFrame {
                 
                 try{
                     Statement stmt = connfunc.createStatement();
-                    database.UpdateTable(stmt, quantityField.getText(), "ingredient", "quantity", "name", ingredientField.getText());
+                    database.UpdateTable(stmt, quantity, "ingredient", "quantity", "name", ingredientField.getText());
                 }
                 catch(Exception e){
                     JOptionPane.showMessageDialog(null,"Error accessing Database 2.");

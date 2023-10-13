@@ -160,7 +160,7 @@ public final class CashierCalls extends SQLCalls{
             Statement st = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             SQLCalls s = new SQLCalls();
 
-            items = s.ViewTable(st,new String[]{"id","_size","price","name"},"menu_item");
+            items = s.ViewTable(st,new String[]{"id","price","name"},"menu_item");
 
         }
         catch (Exception e){
@@ -177,20 +177,8 @@ public final class CashierCalls extends SQLCalls{
                 // System.out.println("\tprice: " + string_menu_item.get(2));
                 // System.out.println("\tname: " + string_menu_item.get(3));
                 MenuItem item = new MenuItem(Long.valueOf(string_menu_item.get(0)).longValue(),//id
-                                             string_menu_item.get(3),//name
-                                             Double.valueOf(string_menu_item.get(2)).doubleValue());//price
-                String size = string_menu_item.get(1);
-                ItemSize enum_size = ItemSize.Medium;
-                if( size.toLowerCase().equals("small")){
-                    enum_size = ItemSize.Small;
-                }
-                else if( size.toLowerCase().equals("large")){
-                    enum_size = ItemSize.Large;
-                }
-                else{
-                    enum_size = ItemSize.Medium;
-                }
-                item.setSize(enum_size);
+                                             string_menu_item.get(2),//name
+                                             Double.valueOf(string_menu_item.get(1)).doubleValue());//price
                 ret.add(item);
             }
         }

@@ -426,11 +426,68 @@ public class Manager_GUI extends JFrame {
         menuPanel.add(priceField);
         menuPanel.add(menuButtonPanel);
 
+        // Report Panel
+        JPanel reportPanel = new JPanel();
+        
+        JPanel salesReportPanel = new JPanel();
+        salesReportPanel.setLayout(new BoxLayout(salesReportPanel, BoxLayout.Y_AXIS));
+        JTextField salesReportTime1 = new JTextField(5);
+        JTextField salesReportTime2 = new JTextField(5);
+        JButton salesReportButton = new JButton("Sales Report");
+
+        JPanel excessReportPanel = new JPanel();
+        excessReportPanel.setLayout(new BoxLayout(excessReportPanel, BoxLayout.Y_AXIS));
+        JTextField excessReportTime = new JTextField(5);
+        JButton excessReportButton = new JButton("Excess Report");
+
+        JButton restockReportButton = new JButton("Restock Report");
+
+        salesReportButton.addActionListener(new ActionListener () {
+            public void actionPerformed(ActionEvent j) {
+                // Given a time window, display the sales by menu item from the order history
+            }
+        });
+
+        excessReportButton.addActionListener(new ActionListener () {
+            public void actionPerformed(ActionEvent j) {
+                // Given a timestamp, display the list of inventory items that only sold less 
+                // than 10% of their inventory between the timestamp and the current time, 
+                // assuming no restocks have happened during the window
+            }
+        });
+
+        restockReportButton.addActionListener(new ActionListener () {
+            public void actionPerformed(ActionEvent j) {
+                // Display the list of inventory items whose current inventory is less than 
+                // the inventory item's minimum amount to have around before needing to restock
+            }
+        });
+
+        salesReportPanel.add(new JLabel("Start"));
+        salesReportPanel.add(salesReportTime1);
+        salesReportPanel.add(Box.createVerticalStrut(10));
+        salesReportPanel.add(new JLabel("End"));
+        salesReportPanel.add(salesReportTime2);
+        salesReportPanel.add(Box.createVerticalStrut(10));
+        salesReportPanel.add(salesReportButton);
+
+        excessReportPanel.add(new JLabel("Start"));
+        excessReportPanel.add(excessReportTime);
+        excessReportPanel.add(Box.createVerticalStrut(10));
+        excessReportPanel.add(excessReportButton);
+
+        reportPanel.add(salesReportPanel);
+        reportPanel.add(Box.createHorizontalStrut(10));
+        reportPanel.add(excessReportPanel);
+        reportPanel.add(Box.createHorizontalStrut(10));
+        reportPanel.add(restockReportButton);
+
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
        
         mainPanel.add(inventoryPanel);
         mainPanel.add(menuPanel);
+        mainPanel.add(reportPanel);
 
         frame.add(mainPanel);
 

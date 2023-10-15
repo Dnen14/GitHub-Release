@@ -1,4 +1,7 @@
 import java.sql.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.sql.Timestamp;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
@@ -445,6 +448,33 @@ public class Manager_GUI extends JFrame {
         salesReportButton.addActionListener(new ActionListener () {
             public void actionPerformed(ActionEvent j) {
                 // Given a time window, display the sales by menu item from the order history
+                Connection connfunc = null;
+
+                try {
+                    connfunc = DriverManager.getConnection(dbURL, username, password);
+                } 
+                catch (Exception e) {
+                    e.printStackTrace();
+                    System.err.println(e.getClass().getName()+": "+e.getMessage());
+                    System.exit(0);
+                }
+
+                //System.out.println("Opened database successfully");
+
+                try{
+                    Statement stmt = connfunc.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                }
+                catch(Exception e){
+                    JOptionPane.showMessageDialog(null,"Error accessing Database 5.");
+                }
+
+                try {
+                    connfunc.close();
+                    //System.out.println("Connection Closed.");
+                } 
+                catch (Exception e) {
+                    JOptionPane.showMessageDialog(null,"Connection NOT Closed.");
+                }
             }
         });
 
@@ -453,6 +483,34 @@ public class Manager_GUI extends JFrame {
                 // Given a timestamp, display the list of inventory items that only sold less 
                 // than 10% of their inventory between the timestamp and the current time, 
                 // assuming no restocks have happened during the window
+
+                Connection connfunc = null;
+
+                try {
+                    connfunc = DriverManager.getConnection(dbURL, username, password);
+                } 
+                catch (Exception e) {
+                    e.printStackTrace();
+                    System.err.println(e.getClass().getName()+": "+e.getMessage());
+                    System.exit(0);
+                }
+
+                //System.out.println("Opened database successfully");
+
+                try{
+                    Statement stmt = connfunc.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                }
+                catch(Exception e){
+                    JOptionPane.showMessageDialog(null,"Error accessing Database 5.");
+                }
+
+                try {
+                    connfunc.close();
+                    //System.out.println("Connection Closed.");
+                } 
+                catch (Exception e) {
+                    JOptionPane.showMessageDialog(null,"Connection NOT Closed.");
+                }
             }
         });
 
@@ -460,6 +518,34 @@ public class Manager_GUI extends JFrame {
             public void actionPerformed(ActionEvent j) {
                 // Display the list of inventory items whose current inventory is less than 
                 // the inventory item's minimum amount to have around before needing to restock
+                
+                Connection connfunc = null;
+
+                try {
+                    connfunc = DriverManager.getConnection(dbURL, username, password);
+                } 
+                catch (Exception e) {
+                    e.printStackTrace();
+                    System.err.println(e.getClass().getName()+": "+e.getMessage());
+                    System.exit(0);
+                }
+
+                //System.out.println("Opened database successfully");
+
+                try{
+                    Statement stmt = connfunc.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                }
+                catch(Exception e){
+                    JOptionPane.showMessageDialog(null,"Error accessing Database 5.");
+                }
+
+                try {
+                    connfunc.close();
+                    //System.out.println("Connection Closed.");
+                } 
+                catch (Exception e) {
+                    JOptionPane.showMessageDialog(null,"Connection NOT Closed.");
+                }
             }
         });
 

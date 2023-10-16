@@ -589,7 +589,7 @@ public class Manager_GUI extends JFrame {
                     Statement stmt = connfunc.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
                 }
                 catch(Exception e){
-                    JOptionPane.showMessageDialog(null,"Error accessing Database 5.");
+                    JOptionPane.showMessageDialog(null,"Error accessing Database 6.");
                 }
 
                 try {
@@ -657,7 +657,7 @@ public class Manager_GUI extends JFrame {
                     
                 }
                 catch(Exception e){
-                    JOptionPane.showMessageDialog(null,"Error accessing Database 5.");
+                    JOptionPane.showMessageDialog(null,"Error accessing Database 7.");
                 }
 
                 try {
@@ -692,7 +692,7 @@ public class Manager_GUI extends JFrame {
                     Statement stmt = connfunc.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
                 }
                 catch(Exception e){
-                    JOptionPane.showMessageDialog(null,"Error accessing Database 5.");
+                    JOptionPane.showMessageDialog(null,"Error accessing Database 8.");
                 }
 
                 try {

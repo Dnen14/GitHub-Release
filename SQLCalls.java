@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.sql.*;
+import java.text.SimpleDateFormat;
 
 public class SQLCalls{
 
@@ -87,6 +88,23 @@ public class SQLCalls{
 
             return columns;
             
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            System.err.println(e.getClass().getName()+": "+e.getMessage());
+            System.exit(0);
+        }
+        return null;
+    }
+
+    public ArrayList<String> ordersInRange(Statement stmt, String time1, String time2) {
+        ArrayList<String> data = new ArrayList<String>();
+        try {
+            ResultSet rs = stmt.executeQuery("SELECT * FROM order_table WHERE order_table.date_placed BETWEEN '" + time1 + "' AND '" + time2 + "'");
+            while (rs.next()) {
+                data.add(rs.getString("id"));
+            }
+            return data;
         }
         catch (Exception e) {
             e.printStackTrace();

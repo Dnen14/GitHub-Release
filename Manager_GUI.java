@@ -83,13 +83,34 @@ public class Manager_GUI extends JFrame {
 
         JTextField ingredientField = new JTextField(20);
         JTextField quantityField = new JTextField(5);
+        JTextField restockPriceField = new JTextField(5);
+
+        JPanel ingredientButtonPanel = new JPanel();
+        ingredientButtonPanel.setLayout(new BoxLayout(ingredientButtonPanel, BoxLayout.Y_AXIS));
         JButton restockButton = new JButton("Restock");
+        JButton addIngredientButton = new JButton("Add Ingredient");
+        JButton updateIngredientButton = new JButton("Update Ingredient");
+        JButton deleteIngredientButton = new JButton("Delete Ingredient");
+
+        restockButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        addIngredientButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        updateIngredientButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        deleteIngredientButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        ingredientButtonPanel.add(restockButton);
+        ingredientButtonPanel.add(Box.createVerticalStrut(10));
+        ingredientButtonPanel.add(addIngredientButton);
+        ingredientButtonPanel.add(Box.createVerticalStrut(10));
+        ingredientButtonPanel.add(updateIngredientButton);
+        ingredientButtonPanel.add(Box.createVerticalStrut(10));
+        ingredientButtonPanel.add(deleteIngredientButton);
 
         inventoryPanel.add(new JLabel("Ingredient: "));
         inventoryPanel.add(ingredientField);
         inventoryPanel.add(new JLabel("Quantity: "));
         inventoryPanel.add(quantityField);
-        inventoryPanel.add(restockButton);
+        inventoryPanel.add(new JLabel("Restock Price: "));
+        inventoryPanel.add(restockPriceField);
+        inventoryPanel.add(ingredientButtonPanel);
 
         restockButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent k) {
@@ -133,6 +154,103 @@ public class Manager_GUI extends JFrame {
                 try {
                     connfunc.close();
                     //System.out.println("Connection Closed.");
+                } 
+                catch (Exception e) {
+                    JOptionPane.showMessageDialog(null,"Connection NOT Closed.");
+                }
+            }
+        });
+        addIngredientButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent k) {
+                // restock request
+                // Update if ingredient already exists, else add new entry
+
+                Connection connfunc = null;
+                try {
+                    connfunc = DriverManager.getConnection(dbURL, username, password);
+                } 
+                catch (Exception e) {
+                    e.printStackTrace();
+                    System.err.println(e.getClass().getName()+": "+e.getMessage());
+                    System.exit(0);
+                }
+                
+                try{
+                    Statement stmt = connfunc.createStatement();
+                    Object[] values = {inventory.length + 2, quantityField.getText(), restockPriceField.getText(), ingredientField.getText()};
+                    database.AddItem("ingredient", stmt, values);
+                }
+                catch(Exception e){
+                    JOptionPane.showMessageDialog(null,"Error accessing Database 2.");
+                }
+
+                try {
+                    connfunc.close();
+                } 
+                catch (Exception e) {
+                    JOptionPane.showMessageDialog(null,"Connection NOT Closed.");
+                }
+            }
+        });
+
+        updateIngredientButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent k) {
+                // restock request
+                // Update if ingredient already exists, else add new entry
+
+                Connection connfunc = null;
+                try {
+                    connfunc = DriverManager.getConnection(dbURL, username, password);
+                } 
+                catch (Exception e) {
+                    e.printStackTrace();
+                    System.err.println(e.getClass().getName()+": "+e.getMessage());
+                    System.exit(0);
+                }
+                
+                try{
+                    Statement stmt = connfunc.createStatement();
+                    database.UpdateTable(stmt, quantityField.getText(), "ingredient", "quantity", "name", ingredientField.getText());
+                    database.UpdateTable(stmt, restockPriceField.getText(), "ingredient", "restock_price", "name", ingredientField.getText());
+                }
+                catch(Exception e){
+                    JOptionPane.showMessageDialog(null,"Error accessing Database 2.");
+                }
+
+                try {
+                    connfunc.close();
+                } 
+                catch (Exception e) {
+                    JOptionPane.showMessageDialog(null,"Connection NOT Closed.");
+                }
+            }
+        });
+
+        deleteIngredientButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent k) {
+                // restock request
+                // Update if ingredient already exists, else add new entry
+
+                Connection connfunc = null;
+                try {
+                    connfunc = DriverManager.getConnection(dbURL, username, password);
+                } 
+                catch (Exception e) {
+                    e.printStackTrace();
+                    System.err.println(e.getClass().getName()+": "+e.getMessage());
+                    System.exit(0);
+                }
+                
+                try{
+                    Statement stmt = connfunc.createStatement();
+                    database.deleteItem(stmt, "ingredient", "name", "'" + ingredientField.getText() + "'");
+                }
+                catch(Exception e){
+                    JOptionPane.showMessageDialog(null,"Error accessing Database 2.");
+                }
+
+                try {
+                    connfunc.close();
                 } 
                 catch (Exception e) {
                     JOptionPane.showMessageDialog(null,"Connection NOT Closed.");

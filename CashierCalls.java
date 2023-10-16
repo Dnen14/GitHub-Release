@@ -29,6 +29,50 @@ public final class CashierCalls extends SQLCalls{
             SQLCalls call = new SQLCalls();
             long order_id = getNextOrderId();
 
+            String ids = "";
+            for(int i = 0 ; i < items.size(); i++){
+                ids += items.get(i).getId();
+                if(i != items.size()-1){
+                    ids += ",";
+                }
+            }
+
+            HashMap<Integer,Double> map = new HashMap<Integer,Double>();
+            // get all of the ingredients needed for every menu item
+            ResultSet rs = st.executeQuery("SELECT * FROM menu_item, ingredient_menu_item_join_table WHERE id=menu_item_id " +
+                                           "AND id in (" + ids + ") ORDER BY id;");
+            while(rs.next()){
+                int ing_id = rs.getInt("ingredient_id");
+                double quant = rs.getDouble("quantity");
+                if(map.containsKey(ing_id)){
+                    map.put(ing_id,map.get(ing_id) + quant);
+                }
+                else{
+                    map.put(ing_id,quant);
+                }
+            }
+            // check to make sure there are enough ingredients
+            boolean enough_ing = true;
+            rs = st.executeQuery("SELECT * FROM ingredient");
+            while(rs.next()){
+                int ing_id = rs.getInt("id");
+                double ing_quant = rs.getDouble("quantity");
+                if(!map.containsKey(ing_id)){
+                    continue;
+                }
+                map.put(ing_id,ing_quant - map.get(ing_id));
+                if(map.get(ing_id) < 0.0){
+                    enough_ing = false;
+                }
+            }
+            if(!enough_ing){
+                throw new Exception("not enough ingredients to fufil order");
+            }
+            // if there are - subtract the ingredients from their respective stock
+            for(Map.Entry<Integer,Double> ing: map.entrySet()){
+                st.executeQuery("UPDATE ingredients SET quantity =" + ing.getValue() + " WHERE id = " + ing.getKey());
+            }
+
             //execute the query for the order table
             call.AddItem("order_table",st,new String[]{String.valueOf(order_id),String.valueOf(getTotal(items)),LocalDateTime.now().toString()});
 
@@ -58,6 +102,7 @@ public final class CashierCalls extends SQLCalls{
             // add the order customer relation to the join table
             call.AddItem("customer_order_join_table",st,new String[]{String.valueOf(getNextCustomerOrderJoinId()),String.valueOf(order_id),String.valueOf(c.getId())});   
 
+            
         }
         catch (Exception e){
             System.out.println("DB Querry Failed");

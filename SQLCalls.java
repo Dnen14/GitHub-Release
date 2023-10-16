@@ -25,6 +25,7 @@ public class SQLCalls{
         return null;
     }
 
+    //Gets values from a column based on a specific table
     public String[] getSpecifiedTableValues(Statement stmt, String table, String columnName){
         try{
             ResultSet rs = stmt.executeQuery("SELECT " + columnName + " FROM " + table);
@@ -50,6 +51,7 @@ public class SQLCalls{
         return null;
     }
 
+    // Returns one value from a table
      public String getOneTableValue(Statement stmt, String table, String columnName, String conditionColumn, String conditionValue){
         try{
             conditionValue = "'" + conditionValue + "'";
@@ -71,6 +73,7 @@ public class SQLCalls{
         return null;
     }
 
+    //Returns any value from a table's specific column that matches the given values
     public String[] getMultipleTableValues(Statement stmt, String table, String columnName, String conditionColumn, String conditionValue){
         try{
             conditionValue = "'" + conditionValue + "'";
@@ -175,6 +178,7 @@ public class SQLCalls{
         }
     }
 
+    //Updates the table with a new value that is provided
     public static void UpdateTable(Statement stmt, Object value, String table, String changedValueColumn, String sameValueColumn, String sameValue){
         try{
                 String changedAddedValue = "";
@@ -202,6 +206,7 @@ public class SQLCalls{
         }
     }
 
+    //Deletes a row of data from a table
     public static void deleteItem(Statement stmt, String table, String column, String value){
         try{
 
@@ -215,6 +220,7 @@ public class SQLCalls{
         }
     }
 
+    //Checks if a table value exists
     public String checkIfValueExists(Statement stmt, String table, String returnedColumnName, String conditionColumnName, String condition){
         try{
             String ret = "";
@@ -226,6 +232,26 @@ public class SQLCalls{
             else
             {
                 ret = "FALSE";
+            }
+
+            return ret;
+        }
+        catch(Exception e){
+            e.printStackTrace();
+            System.err.println(e.getClass().getName()+": "+e.getMessage());
+            System.exit(0);
+        }
+        return null;
+    }
+
+    //Get two table values from the a query based on the two conditions
+    public String getQuantityOfIngredientsInMenuItem(Statement stmt, String ingredient_id, String menu_item_id){
+        try{
+            String ret = "";
+
+            ResultSet rs = stmt.executeQuery("SELECT quantity FROM ingredient_menu_item_join_table WHERE ingredient_id = " + ingredient_id + " AND menu_item_id = " + menu_item_id);
+            if(rs.next()){
+                ret = rs.getString("quantity");
             }
 
             return ret;

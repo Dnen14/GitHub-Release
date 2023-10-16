@@ -2,10 +2,13 @@ import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Arrays;
+import java.util.HashMap;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -24,6 +27,9 @@ public class Manager_GUI extends JFrame {
     public static Object[][] inventory;
     public static String[] ingredients = new String[0];
     public static String[] menuItems = new String[0];
+    public static ArrayList<String> orderIDs = new ArrayList<String>();
+    public static ArrayList<String> excessReportList = new ArrayList<String>();
+
 
     public static void main(String[] args) {
         // Create the Manager POS System frame
@@ -597,7 +603,7 @@ public class Manager_GUI extends JFrame {
         });
 
         excessReportButton.addActionListener(new ActionListener () {
-            public void actionPerformed(ActionEvent j) {
+            public void actionPerformed(ActionEvent q) {
                 // Given a timestamp, display the list of inventory items that only sold less 
                 // than 10% of their inventory between the timestamp and the current time, 
                 // assuming no restocks have happened during the window
@@ -617,6 +623,38 @@ public class Manager_GUI extends JFrame {
 
                 try{
                     Statement stmt = connfunc.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                    String timestamp = excessReportTime.getText().toString();
+                    orderIDs = database.ordersInRange(stmt, timestamp, Timestamp.from(Instant.now()).toString());
+
+                    ArrayList<ArrayList<String>> menuIDs = new ArrayList<ArrayList<String>>();
+                    for(int i = 0; i < orderIDs.size(); i++){
+                        menuIDs.add(new ArrayList<String>(Arrays.asList(database.getMultipleTableValues(stmt, "menu_item_order_join_table", "menuitemid", "orderid", orderIDs.get(i)))));
+                    }
+
+                    HashMap<String, Integer> ingredientsUsedMap = new HashMap<String, Integer>();
+                    for(int i = 0; i < ingredients.length; i++){
+                        ingredientsUsedMap.put(ingredients[i], 0);
+                    }
+
+                    for(int i = 0; i < menuIDs.size(); i++){
+                        for(int j = 0; j < menuIDs.get(i).size(); j++){
+                            ArrayList<String> ingredientIDs = new ArrayList<String>();
+                            ingredientIDs = (new ArrayList<String>(Arrays.asList(database.getMultipleTableValues(stmt, "ingredient_menu_item_join_table", "ingredient_id", "menu_item_id", menuIDs.get(i).get(j)))));
+                            for(int k = 0; k < ingredientIDs.size(); k++){
+                                int quantityOfIngredientUsed = Integer.valueOf(database.getQuantityOfIngredientsInMenuItem(stmt, menuIDs.get(i).get(j), ingredientIDs.get(k)));
+                                ingredientsUsedMap.put(ingredientIDs.get(k), ingredientsUsedMap.get(ingredientIDs.get(k)) + quantityOfIngredientUsed);
+                            }
+                        }
+                    }
+
+                    HashMap<String, Integer> currentIngredientCountMap = new HashMap<String, Integer>();
+                    for(int i = 0; i < ingredients.length; i++){
+                        currentIngredientCountMap.put(ingredients[i], Integer.valueOf(database.getOneTableValue(stmt, "ingredient", "quantity", "name", ingredients[i])));
+                        if(currentIngredientCountMap.get(ingredients[i]) > (ingredientsUsedMap.get(ingredients[i]) + currentIngredientCountMap.get(ingredients[i])) * .9){
+                            excessReportList.add(ingredients[i]);
+                        }
+                    }
+                    
                 }
                 catch(Exception e){
                     JOptionPane.showMessageDialog(null,"Error accessing Database 5.");

@@ -110,6 +110,10 @@ public final class CashierCalls extends SQLCalls{
         }
     }
 
+    public static ArrayList<Ingredient> getUnderStockedIngredients(){
+
+    }
+
     /*
         @author Brandon Thomas
         @return a long containing the next available id of an order
@@ -234,6 +238,49 @@ public final class CashierCalls extends SQLCalls{
         
         
         return ret;
+    }
+
+    public static ArrayList<Ingredient> getIngredients(){
+        Connection conn = null;
+        try {
+            conn = DriverManager.getConnection(
+                "jdbc:postgresql://csce-315-db.engr.tamu.edu/csce315331_09m_db",
+                "csce315_909_bat2492",
+                "BT2415");
+        } 
+        catch (Exception e) {
+            e.printStackTrace();
+            System.err.println(e.getClass().getName()+": "+e.getMessage());
+            System.exit(0);
+        }
+        ArrayList<ArrayList<String>> str_ingredients = new ArrayList<ArrayList<String>>();
+        try{
+            Statement st = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            SQLCalls s = new SQLCalls();
+
+            str_customers = s.ViewTable(st,new String[]{"id","_name","restock_price","quantity","threshold"},"ingredient");
+        }
+        catch (Exception e){
+            System.out.println("DB Querry Failed");
+            System.out.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+        ArrayList<Ingredient> ingredients = new ArrayList<Ingredient>();
+        try{
+            for(ArrayList<String> str_ingredient: str_ingredients){
+                Ingredient ing = new Ingredient(Long.valueOf(str_ingredient.get(0)).longValue(),
+                                                str_ingredient.get(1),
+                                                Double.valueOf(str_ingredient.get(2)).doubleValue(),
+                                                Double.valueOf(str_ingredient.get(3)).doubleValue(),
+                                                Double.valueOf(str_ingredient.get(4)).doubleValue());
+
+                ingredients.add(ing);
+            }
+        } catch (Exception e){
+            System.out.println("Could not parse out an Ingredient");
+            System.out.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+
+        return ingredients;
     }
 
     /*

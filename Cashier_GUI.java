@@ -208,14 +208,18 @@ public class Cashier_GUI extends JFrame {
         JList<MenuItem> itemsList = new JList<>(orderListModel);
         itemsList.setCellRenderer(new MenuItemRenderer());
 
+        double total = 0.0; // Initialize the total to 0
+
         for (MenuItem menuItem : orderSummary) {
             orderListModel.addElement(menuItem);
+            total += menuItem.getPrice(); // Add the price of each item to the total
         }
 
         itemsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         itemsList.addListSelectionListener(e -> {
             int selectedIndex = itemsList.getSelectedIndex();
             if (selectedIndex >= 0) {
+                MenuItem removedItem = orderListModel.getElementAt(selectedIndex);
                 orderListModel.remove(selectedIndex);
                 orderSummary.remove(selectedIndex);
                 updateOrderSummary();
@@ -237,6 +241,7 @@ public class Cashier_GUI extends JFrame {
             orderSummaryPanel.add(label);
         }
 
+        totalLabel.setText("Total: $" + String.format("%.2f", total)); // Update the totalLabel
         orderSummaryPanel.revalidate(); // Refresh the order summary panel
         orderSummaryPanel.repaint();
 

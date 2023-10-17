@@ -1,7 +1,6 @@
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.sql.Timestamp;
 import java.time.Instant;
 import java.awt.*;
 import java.awt.event.*;
@@ -667,6 +666,20 @@ public class Manager_GUI extends JFrame {
                 catch (Exception e) {
                     JOptionPane.showMessageDialog(null,"Connection NOT Closed.");
                 }
+
+                JPanel panel = new JPanel();
+
+                JList<String> excessJList = new JList<>();
+                DefaultListModel<String> menuModel = new DefaultListModel<>();
+                for (String ingredient : excessReportList) {
+                    menuModel.addElement(ingredient);
+                }
+                excessJList.setModel(menuModel);
+                JScrollPane excessPane = new JScrollPane(excessJList);
+                
+                panel.add(excessPane);
+
+                JOptionPane.showConfirmDialog(null, panel, "Customer Information", JOptionPane.OK_CANCEL_OPTION);
             }
         });
 

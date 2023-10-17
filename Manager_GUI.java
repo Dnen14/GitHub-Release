@@ -1,4 +1,5 @@
 import java.sql.*;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.time.Instant;
@@ -8,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -306,7 +308,7 @@ public class Manager_GUI extends JFrame {
                     String[] selectedIngredientsID = new String[0];
                     String[] selectedIngredients = new String[0];
                     
-                   try { 
+                   try {
                         connfunc = DriverManager.getConnection(dbURL, username, password);
                     } 
                     catch (Exception e) {
@@ -582,12 +584,65 @@ public class Manager_GUI extends JFrame {
                     System.exit(0);
                 }
 
-                //System.out.println("Opened database successfully");
+                System.out.println("Opened database successfully");
 
                 try{
+
                     Statement stmt = connfunc.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+
+                    // Get the start and end times from the text fields
+                    String startTime = salesReportTime1.getText();
+                    String endTime = salesReportTime2.getText();
+
+                    // Query to retrieve sales data within the specified time window
+                    ArrayList<String> salesData = database.getSalesByMenuItem(stmt, startTime, endTime);
+
+                    // Create a map to store the total sales for each menu item
+                    Map<String, Double> salesByMenuItem = new HashMap<>();
+
+                    for (String menuItemName : salesData) {
+                        double price = Double.valueOf(database.getOneTableValue(stmt, "menu_item", "price", "name", menuItemName));
+                        salesByMenuItem.put(menuItemName, salesByMenuItem.getOrDefault(menuItemName, 0.0) + price);
+                    }
+
+                    // TODO: print all items in salesByMenuItem (for debugging):
+                    // System.out.println("Items in salesByMenuItem:");
+                    // for (Map.Entry<String, Double> entry : salesByMenuItem.entrySet()) {
+                    //     System.out.println(entry.getKey() + ": " + entry.getValue());
+                    // }
+
+
+                    // Create a pop-up window to display the sales report
+                    JFrame popupFrame = new JFrame("Sales Report");
+                    popupFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+                    JPanel popupPanel = new JPanel(new BorderLayout());
+
+                    // Create a JTable to display the results
+                    DefaultTableModel model = new DefaultTableModel(salesByMenuItem.size(), 2);
+                    model.setColumnIdentifiers(new String[]{"Menu Item", "Total Sales"});
+
+                    // Create a DecimalFormat to format the total sales to two decimal places
+                    DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+
+                    int row = 0;
+                    for (Map.Entry<String, Double> entry : salesByMenuItem.entrySet()) {
+                        model.setValueAt(entry.getKey(), row, 0);
+                        model.setValueAt(decimalFormat.format(entry.getValue()), row, 1);
+                        row++;
+                    }
+
+                    JTable table = new JTable(model);
+                    JScrollPane scrollPane = new JScrollPane(table);
+                    popupPanel.add(scrollPane, BorderLayout.CENTER);
+
+                    popupFrame.add(popupPanel);
+                    popupFrame.pack();
+                    popupFrame.setVisible(true);
+                
                 }
                 catch(Exception e){
+                    e.printStackTrace();
                     JOptionPane.showMessageDialog(null,"Error accessing Database 6.");
                 }
 
@@ -666,20 +721,6 @@ public class Manager_GUI extends JFrame {
                 catch (Exception e) {
                     JOptionPane.showMessageDialog(null,"Connection NOT Closed.");
                 }
-
-                JPanel panel = new JPanel();
-
-                JList<String> excessJList = new JList<>();
-                DefaultListModel<String> menuModel = new DefaultListModel<>();
-                for (String ingredient : excessReportList) {
-                    menuModel.addElement(ingredient);
-                }
-                excessJList.setModel(menuModel);
-                JScrollPane excessPane = new JScrollPane(excessJList);
-                
-                panel.add(excessPane);
-
-                JOptionPane.showConfirmDialog(null, panel, "Customer Information", JOptionPane.OK_CANCEL_OPTION);
             }
         });
 

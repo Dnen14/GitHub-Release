@@ -111,7 +111,14 @@ public final class CashierCalls extends SQLCalls{
     }
 
     public static ArrayList<Ingredient> getUnderStockedIngredients(){
-
+        ArrayList<Ingredient> understocked = new ArrayList<Ingredient>();
+        ArrayList<Ingredient> ingredients = getIngredients();
+        for(Ingredient ing: ingredients){
+            if(ing.getQuantity() < ing.getThreshold()){
+                understocked.add(ing);
+            }
+        }
+        return understocked;
     }
 
     /*
@@ -258,7 +265,7 @@ public final class CashierCalls extends SQLCalls{
             Statement st = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             SQLCalls s = new SQLCalls();
 
-            str_customers = s.ViewTable(st,new String[]{"id","_name","restock_price","quantity","threshold"},"ingredient");
+            str_ingredients = s.ViewTable(st,new String[]{"id","_name","restock_price","quantity","threshold"},"ingredient");
         }
         catch (Exception e){
             System.out.println("DB Querry Failed");

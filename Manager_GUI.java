@@ -307,7 +307,7 @@ public class Manager_GUI extends JFrame {
                     String[] selectedIngredientsID = new String[0];
                     String[] selectedIngredients = new String[0];
                     
-                    try {
+                   try { 
                         connfunc = DriverManager.getConnection(dbURL, username, password);
                     } 
                     catch (Exception e) {

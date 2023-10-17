@@ -57,7 +57,7 @@ public class Cashier_GUI extends JFrame {
         //Arrange the panels
         JPanel leftPanel = new JPanel();
         leftPanel.setLayout(new BorderLayout());
-        leftPanel.add(orderSummaryPanel, BorderLayout.WEST);
+        leftPanel.add(orderSummaryPanel);
         leftPanel.add(totalLabel, BorderLayout.SOUTH);
 
         frame.add(menuPanel, BorderLayout.EAST);
@@ -149,7 +149,8 @@ public class Cashier_GUI extends JFrame {
         return checkoutPanel;
     }
 
-    private static void updateOrderSummary() {
+    private static void updateOrderSummary() { 
+        /*
         orderSummaryPanel.removeAll(); // Clear the order summary panel
 
         // Calculate and display the total
@@ -177,7 +178,7 @@ public class Cashier_GUI extends JFrame {
             JLabel itemLabel = new JLabel(menuItem.getName() + " - $" + menuItem.getPrice());
             itemPanel.add(removeButton);
             itemPanel.add(itemLabel);
-            itemPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+            // itemPanel.setAlignmentY(Component.TOP_ALIGNMENT);
             itemsPanel.add(itemPanel);
             
         }
@@ -195,7 +196,50 @@ public class Cashier_GUI extends JFrame {
         
         orderSummaryPanel.revalidate(); // Refresh the order summary panel
         orderSummaryPanel.repaint();
+        */
         
+        orderSummaryPanel.removeAll(); // Clear the order summary panel
+
+        // Create a JPanel to hold the items
+        JPanel itemsPanel = new JPanel();
+        itemsPanel.setLayout(new BoxLayout(itemsPanel, BoxLayout.Y_AXIS));
+
+        DefaultListModel<MenuItem> orderListModel = new DefaultListModel<>();
+        JList<MenuItem> itemsList = new JList<>(orderListModel);
+        itemsList.setCellRenderer(new MenuItemRenderer());
+
+        for (MenuItem menuItem : orderSummary) {
+            orderListModel.addElement(menuItem);
+        }
+
+        itemsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        itemsList.addListSelectionListener(e -> {
+            int selectedIndex = itemsList.getSelectedIndex();
+            if (selectedIndex >= 0) {
+                orderListModel.remove(selectedIndex);
+                orderSummary.remove(selectedIndex);
+                updateOrderSummary();
+            }
+        });
+
+        // Create a JScrollPane and add the itemsList to it
+        JScrollPane scrollPane = new JScrollPane(itemsList);
+        itemsPanel.add(scrollPane);
+
+        orderSummaryPanel.add(itemsPanel);
+        orderSummaryPanel.setBackground(new Color(200, 200, 200));
+
+        if (orderSummary.isEmpty()) {
+            JLabel label = new JLabel("<html><div style='text-align: center;'>Select an item to add to the order</div></html>");
+            orderSummaryPanel.add(label);
+        } else {
+            JLabel label = new JLabel("<html><div style='text-align: center;'>Click on an item in the order to remove it</div></html>");
+            orderSummaryPanel.add(label);
+        }
+
+        orderSummaryPanel.revalidate(); // Refresh the order summary panel
+        orderSummaryPanel.repaint();
+
     }
 
     private static void showCustomerInfoDialog() {
@@ -275,5 +319,17 @@ public class Cashier_GUI extends JFrame {
     private static void clearOrderSummary() {
         orderSummary.clear();
         updateOrderSummary();
+    }
+}
+
+class MenuItemRenderer extends DefaultListCellRenderer {
+    @Override
+    public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+        super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+        if (value instanceof MenuItem) {
+            MenuItem menuItem = (MenuItem) value;
+            setText(menuItem.getName() + " - $" + menuItem.getPrice());
+        }
+        return this;
     }
 }

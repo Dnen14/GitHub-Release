@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.math.BigDecimal;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -631,29 +632,38 @@ public class Manager_GUI extends JFrame {
                         menuIDs.add(new ArrayList<String>(Arrays.asList(database.getMultipleTableValues(stmt, "menu_item_order_join_table", "menuitemid", "orderid", orderIDs.get(i)))));
                     }
 
-                    HashMap<String, Integer> ingredientsUsedMap = new HashMap<String, Integer>();
+                    HashMap<String, BigDecimal> ingredientsUsedMap = new HashMap<String, BigDecimal>();
                     for(int i = 0; i < ingredients.length; i++){
-                        ingredientsUsedMap.put(ingredients[i], 0);
+                        ingredientsUsedMap.put(ingredients[i], new BigDecimal("0.00"));
                     }
 
                     for(int i = 0; i < menuIDs.size(); i++){
                         for(int j = 0; j < menuIDs.get(i).size(); j++){
                             ArrayList<String> ingredientIDs = new ArrayList<String>();
-                            ingredientIDs = (new ArrayList<String>(Arrays.asList(database.getMultipleTableValues(stmt, "ingredient_menu_item_join_table", "ingredient_id", "menu_item_id", menuIDs.get(i).get(j)))));
+                            //priceField.setText(menuIDs.get(i).get(j));
+                            //priceField.setText(Integer.toString(menuIDs.get(i).size()));
+                            ingredientList.setModel(menuModel);
+                            ingredientList.setCellRenderer(new CheckBoxListCellRenderer());
+                            String[] strings = database.getMultipleTableValues(stmt, "ingredient_menu_item_join_table", "ingredient_id", "menu_item_id", menuIDs.get(i).get(j));
+                            ingredientIDs = (new ArrayList<String>(Arrays.asList(strings)));
                             for(int k = 0; k < ingredientIDs.size(); k++){
-                                int quantityOfIngredientUsed = Integer.valueOf(database.getQuantityOfIngredientsInMenuItem(stmt, menuIDs.get(i).get(j), ingredientIDs.get(k)));
-                                ingredientsUsedMap.put(ingredientIDs.get(k), ingredientsUsedMap.get(ingredientIDs.get(k)) + quantityOfIngredientUsed);
+                                String string = database.getQuantityOfIngredientsInMenuItem(stmt, ingredientIDs.get(k), menuIDs.get(i).get(j));
+                                BigDecimal quantityOfIngredientUsed = new BigDecimal(string);
+                                String ingredientName = database.getOneTableValue(stmt, "ingredient", "name", "id", ingredientIDs.get(k));
+                                ingredientsUsedMap.replace(ingredientName, ingredientsUsedMap.get(ingredientName).add(quantityOfIngredientUsed));
                             }
                         }
                     }
 
-                    HashMap<String, Integer> currentIngredientCountMap = new HashMap<String, Integer>();
+                    HashMap<String, BigDecimal> currentIngredientCountMap = new HashMap<String, BigDecimal>();
                     for(int i = 0; i < ingredients.length; i++){
-                        currentIngredientCountMap.put(ingredients[i], Integer.valueOf(database.getOneTableValue(stmt, "ingredient", "quantity", "name", ingredients[i])));
-                        if(currentIngredientCountMap.get(ingredients[i]) > (ingredientsUsedMap.get(ingredients[i]) + currentIngredientCountMap.get(ingredients[i])) * .9){
+                        String string = database.getOneTableValue(stmt, "ingredient", "quantity", "name", ingredients[i]);
+                        BigDecimal currentInventoryValue = new BigDecimal(string);
+                        currentIngredientCountMap.put(ingredients[i], currentInventoryValue);
+                        if(currentIngredientCountMap.get(ingredients[i]).doubleValue() > (ingredientsUsedMap.get(ingredients[i]).add(currentIngredientCountMap.get(ingredients[i]))).multiply(new BigDecimal("0.9")).doubleValue()){
                             excessReportList.add(ingredients[i]);
                         }
-                    }
+                    } 
                     
                 }
                 catch(Exception e){

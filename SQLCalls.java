@@ -250,7 +250,7 @@ public class SQLCalls{
             String ret = "";
 
             ResultSet rs = stmt.executeQuery("SELECT quantity FROM ingredient_menu_item_join_table WHERE ingredient_id = " + ingredient_id + " AND menu_item_id = " + menu_item_id);
-            if(rs.next()){
+            while(rs.next()){
                 ret = rs.getString("quantity");
             }
 

@@ -70,7 +70,7 @@ public final class CashierCalls extends SQLCalls{
             }
             // if there are - subtract the ingredients from their respective stock
             for(Map.Entry<Integer,Double> ing: map.entrySet()){
-                st.executeQuery("UPDATE ingredients SET quantity =" + ing.getValue() + " WHERE id = " + ing.getKey());
+                st.executeUpdate("UPDATE ingredient SET quantity =" + ing.getValue() + " WHERE id = " + ing.getKey());
             }
 
             //execute the query for the order table

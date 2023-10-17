@@ -614,22 +614,33 @@ public class Manager_GUI extends JFrame {
 
 
                     // Create a pop-up window to display the sales report
-                    JFrame popupFrame = new JFrame("Sales Report");
+                    JFrame popupFrame = new JFrame("Sales Report in between" + startTime + " and " + endTime);
                     popupFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
                     JPanel popupPanel = new JPanel(new BorderLayout());
 
                     // Create a JTable to display the results
-                    DefaultTableModel model = new DefaultTableModel(salesByMenuItem.size(), 2);
-                    model.setColumnIdentifiers(new String[]{"Menu Item", "Total Sales"});
+                    DefaultTableModel model = new DefaultTableModel(salesByMenuItem.size(), 3);
+                    model.setColumnIdentifiers(new String[]{"Menu Item", "Total Sales Revenue", "Total Quantity"});
 
                     // Create a DecimalFormat to format the total sales to two decimal places
                     DecimalFormat decimalFormat = new DecimalFormat("#0.00");
 
                     int row = 0;
                     for (Map.Entry<String, Double> entry : salesByMenuItem.entrySet()) {
-                        model.setValueAt(entry.getKey(), row, 0);
-                        model.setValueAt(decimalFormat.format(entry.getValue()), row, 1);
+                        String menuItemName = entry.getKey();
+                        double totalSales = entry.getValue();
+
+                        // Get the price for the current menu item
+                        double price = Double.valueOf(database.getOneTableValue(stmt, "menu_item", "price", "name", menuItemName));
+
+                        // Calculate the quantity sold by dividing total sales by price
+                        int quantity = (int) (totalSales / price);
+
+                        model.setValueAt(menuItemName, row, 0);
+                        model.setValueAt(decimalFormat.format(totalSales), row, 1);
+                        model.setValueAt(quantity, row, 2);
+
                         row++;
                     }
 

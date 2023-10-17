@@ -264,4 +264,34 @@ public class SQLCalls{
         return null;
     }
 
+    public ArrayList<String> getSalesByMenuItem(Statement stmt, String startTime, String endTime) {
+        
+
+        try {
+
+            ArrayList<String> salesData = new ArrayList<String>();
+
+            String query = "SELECT m.name " +
+                "FROM menu_item_order_join_table mio " +
+                "INNER JOIN order_table o ON mio.orderid = o.id " +
+                "INNER JOIN menu_item m ON mio.menuitemid = m.id " +
+                "WHERE o.date_placed BETWEEN '" + startTime + "' AND '" + endTime + "'";
+
+            ResultSet rs = stmt.executeQuery(query);
+
+            while (rs.next()) {
+                String menuItemName = rs.getString("name");
+                salesData.add(menuItemName);
+            }
+
+            return salesData;
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+
+        return null;
+    }
+
 }

@@ -26,7 +26,7 @@ public class Ingredient{
     }
 
     public Ingredient(long id, String name, double price, double quantity, double restock){
-        this(id,name,price,quantity,restock,50)
+        this(id,name,price,quantity,restock,50);
     }
 
     public Ingredient(long id, String name, double price, double quantity, double restock, double threshold){
@@ -45,7 +45,7 @@ public class Ingredient{
         _id = id;
     }
 
-    public Stirng getName(){
+    public String getName(){
         return _name;
     }
 

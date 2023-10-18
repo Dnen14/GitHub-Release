@@ -178,6 +178,16 @@ public final class CashierCalls extends SQLCalls{
     }
 
     /**
+     * gets the next available id in the menu item ingredient join table of the database
+     * 
+     *  @author Brandon Thomas
+     *  @return long containing the next available id
+     */
+    public static long getNextMenuItemIngredientJoinId(){
+        return getNextTableId("ingredient_menu_item_join_table");
+    }
+
+    /**
         @author Brandon Thomas
         @param table - the table to get the next available id from
         @return a long containing the next available id from the table

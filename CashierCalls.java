@@ -2,9 +2,11 @@ import java.util.*;
 import java.sql.*;
 import java.time.*;
 
-/*
-    class that contains all of the necesarry function calls for the front end to populate the page
-    @author Brandon Thomas
+/**
+ *   class that contains all of the necesarry function calls for the front end to populate the page
+ *   @author Brandon Thomas
+ *   @version 1.0
+ *   @since 10/17/2023 
 */
 public final class CashierCalls extends SQLCalls{
     
@@ -121,7 +123,7 @@ public final class CashierCalls extends SQLCalls{
      * that have quantities below their specified restocking threshold. It returns an
      * ArrayList of understocked ingredients.
      * 
-     * @ author Brandon Thomas
+     * @author Brandon Thomas
      * @return An ArrayList of Ingredient objects representing the understocked ingredients.
      */
     public static ArrayList<Ingredient> getUnderStockedIngredients(){
@@ -140,7 +142,6 @@ public final class CashierCalls extends SQLCalls{
      * 
      *  @author Brandon Thomas
      *  @return a long containing the next available id of an order
-     *  @throws no errors
      */
     public static long getNextOrderId(){
         return getNextTableId("order_table");
@@ -150,7 +151,7 @@ public final class CashierCalls extends SQLCalls{
      * gets the next available id in the menu item table of the database
      * 
      *  @author Brandon Thomas
-     * @return long containing the next available id in the menu item order join table of the database
+     *  @return long containing the next available id in the menu item order join table of the database
      */
     public static long getNextMenuOrderJoinId(){
         return getNextTableId("menu_item_order_join_table");
@@ -159,7 +160,7 @@ public final class CashierCalls extends SQLCalls{
     /**
      * gets the next available id in the customer table of the database
      * 
-     * @author Brandon Thomas
+     *  @author Brandon Thomas
      *  @return long containing the next available id in the customer table of the database
      */
     public static long getNextCustomerId(){
@@ -220,7 +221,7 @@ public final class CashierCalls extends SQLCalls{
      * gets all of the menu items in the database
      * 
      * @author Brandon Thomas
-     * @returns all of the menu items in the database as an ArrayList<MenuItem>
+     * @return all of the menu items in the database as an ArrayList<MenuItem>
     */
     public static ArrayList<MenuItem> getMenuItems(){
         Connection conn = null;
@@ -378,8 +379,8 @@ public final class CashierCalls extends SQLCalls{
     /**
      * gets the total price of all of the items in an order
      * 
-     * @author Brandon Thomas
-     *  @param ArrayList<MenuItem> items - a list of all of the items in an order
+     *  @author Brandon Thomas
+     *  @param  items - a list of all of the items in an order
      *  @return double - total price of all of the items in the list
      */
     public static double getTotal(ArrayList<MenuItem> items){

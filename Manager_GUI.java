@@ -515,12 +515,11 @@ public class Manager_GUI extends JFrame {
                     values[0] = menuItems.length + 2;
                     values[1] = priceField.getText();
                     values[2] = menuItemField.getText();
-                    Random num = new Random();
 
                     database.AddItem("menu_item", stmt, values);
 
                     for(int i = 0; i < selectedCheckboxesIDs.length; i++){
-                        Object[] inputVals = {num.nextInt(10000)+1, selectedCheckboxesIDs[i], menuItems.length};
+                        Object[] inputVals = {CashierCalls.getNextMenuItemIngredientJoinId(), selectedCheckboxesIDs[i], menuItems.length};
                         database.AddItem("ingredient_menu_item_join_table", stmt, inputVals);
                     }
                 }
@@ -568,9 +567,8 @@ public class Manager_GUI extends JFrame {
                             priceField.setText(condition);
                             selectedCheckboxes = (String) menuModel.getElementAt(i).getText();
                             selectedCheckboxesIDs = database.getOneTableValue(stmt, "ingredient", "id", "name", selectedCheckboxes);
-                            Random num = new Random();
                             
-                            Object[] inputVals = {num.nextInt(10000)+1, selectedCheckboxesIDs, selectedMenuItemID};
+                            Object[] inputVals = {CashierCalls.getNextMenuItemIngredientJoinId(), selectedCheckboxesIDs, selectedMenuItemID};
                             for(int z = 0; z < inputVals.length; ++z) {
                                 System.out.println(inputVals[z]);
                             }

@@ -565,7 +565,7 @@ public class Manager_GUI extends JFrame {
                         String selectedIngredientItemID = database.getOneTableValue(stmt, "ingredient", "id", "name", ingredients[i]);
                         String condition = "menu_item_id = " + selectedMenuItemID + " AND ingredient_id = " + selectedIngredientItemID;
 
-                        if(menuModel.getElementAt(i).isSelected() == true && "FALSE".equals(database.checkIfValueExists(stmt, "ingredient_menu_item_join_table", "id", "id",condition))){
+                        if(menuModel.getElementAt(i).isSelected() == true && "FALSE".equals(database.checkIfValueExists(stmt, "ingredient_menu_item_join_table", "join_id", "join_id",condition))){
                             priceField.setText(condition);
                             selectedCheckboxes = (String) menuModel.getElementAt(i).getText();
                             selectedCheckboxesIDs = database.getOneTableValue(stmt, "ingredient", "id", "name", selectedCheckboxes);

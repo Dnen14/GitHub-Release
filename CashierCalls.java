@@ -2,6 +2,10 @@ import java.util.*;
 import java.sql.*;
 import java.time.*;
 
+/*
+    class that contains all of the necesarry function calls for the front end to populate the page
+    @author Brandon Thomas
+*/
 public final class CashierCalls extends SQLCalls{
     
     /*
@@ -110,6 +114,11 @@ public final class CashierCalls extends SQLCalls{
         }
     }
 
+    /*
+        gets all of the ingredients that are under their respective stock threshold
+        @author Brandon Thomas
+        @returns all Ingredients that are understocked
+    */
     public static ArrayList<Ingredient> getUnderStockedIngredients(){
         ArrayList<Ingredient> understocked = new ArrayList<Ingredient>();
         ArrayList<Ingredient> ingredients = getIngredients();
@@ -122,6 +131,7 @@ public final class CashierCalls extends SQLCalls{
     }
 
     /*
+        gets the next available id in the sql order_table
         @author Brandon Thomas
         @return a long containing the next available id of an order
         @throws no errors
@@ -247,6 +257,10 @@ public final class CashierCalls extends SQLCalls{
         return ret;
     }
 
+    /*
+        @author Brandon Thomas
+        @returns all of the ingredients in the database  
+    */
     public static ArrayList<Ingredient> getIngredients(){
         Connection conn = null;
         try {

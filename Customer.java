@@ -1,5 +1,6 @@
 /*
     @author Brandon Thomas
+    a class to store data of a Customer entry with basic constructors and set/get functions
 */
 public class Customer{
     private long _id;

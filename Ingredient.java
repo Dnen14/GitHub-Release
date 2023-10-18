@@ -1,3 +1,7 @@
+/*
+    @author Brandon Thomas
+    a class to store data of an Ingredient entry with basic constructors and set/get functions
+*/
 public class Ingredient{
     String _name;
     long _id;

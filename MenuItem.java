@@ -14,6 +14,10 @@ enum ItemSize{
     }
 }
 
+/*
+    @author Brandon Thomas
+    a class to store data of a MenuItem entry with basic constructors and set/get functions
+*/
 public class MenuItem{
     private double _price;
     private String _name;

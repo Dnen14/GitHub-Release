@@ -611,25 +611,10 @@ public class Manager_GUI extends JFrame {
                 try{
                     Statement stmt = connfunc.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 
-                    int count = 0;
-                    for(int i = 0; i < ingredients.length; i++){
-                         if(menuModel.getElementAt(i).isSelected() == true){
-                            count++;
-                        }
-                    }
-                
-                    selectedIDs = new String[count];
-                    int k = 0;
-                    for(int i = 0; i < ingredients.length; i++){
-                         if(menuModel.getElementAt(i).isSelected() == true){
-                            selectedIDs[k] = database.getOneTableValue(stmt, "ingredient", "id", "name", menuModel.getElementAt(i).getText());
-                            k++;
-                        }
-                    }
+                    String menuItemID = database.getOneTableValue(stmt, "menu_item", "id", "name", (String) menuList.getSelectedValue());
+                    database.deleteItem(stmt, "ingredient_menu_item_join_table", "menu_item", menuItemID);
+                    database.deleteItem(stmt, "menu_item", "id", menuItemID);
 
-                    for(int i = 0; i < selectedIDs.length; i++){
-                        database.deleteItem(stmt, "ingredient_menu_item_join_table", "ingredient_id",(String) ((String) selectedIDs[i] + " AND menu_item_id = " + (String) database.getOneTableValue(stmt, "menu_item", "id", "name",(String) menuList.getSelectedValue())));
-                    }
                 }
                 catch(Exception e){
                     JOptionPane.showMessageDialog(null,"Error accessing Database 6.");
@@ -977,7 +962,7 @@ class CheckBoxListCellRenderer extends JCheckBox implements ListCellRenderer<JCh
     /**
      * Returns a component that displays the specified value as a checkbox within a JList cell.
      *
-     * @author Zak or Abhinav?
+     * @author Zak
      * @param list The JList that is requesting the rendering.
      * @param value The value to be rendered as a checkbox.
      * @param index The cell index being rendered.

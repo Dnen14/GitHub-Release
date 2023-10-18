@@ -473,7 +473,6 @@ public class Manager_GUI extends JFrame {
                         Statement stmt = connfunc.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
                         priceValue = database.getOneTableValue(stmt, "menu_item", "price", "name", (String) menuList.getSelectedValue());
                         menuID = database.getOneTableValue(stmt, "menu_item", "id", "name", (String) menuList.getSelectedValue());
-                        System.out.println(menuID);
                         selectedIngredientsID = database.getMultipleTableValues(stmt, "ingredient_menu_item_join_table", "ingredient_id", "menu_item_id", menuID);
                         selectedIngredients = new String[selectedIngredientsID.length];
                         for(int i = 0; i < selectedIngredientsID.length; i++){

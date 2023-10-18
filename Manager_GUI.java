@@ -1,7 +1,5 @@
 import java.sql.*;
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.time.Instant;
 import java.awt.*;
 import java.awt.event.*;
@@ -39,7 +37,9 @@ public class Manager_GUI extends JFrame {
     private static JFrame cashierFrame;
     private static JFrame managerFrame;
 
-    public static Object[][] inventory;
+    public static SQLCalls database = new SQLCalls();
+    public static Object[][] inventory = new Object[0][0];
+    public static String[] columnNames = new String[0];
     public static String[] ingredients = new String[0];
     public static String[] menuItems = new String[0];
     public static ArrayList<String> orderIDs = new ArrayList<String>();
@@ -130,6 +130,46 @@ public class Manager_GUI extends JFrame {
     }
 
     /**
+     * Refreshes the ingredient table when editing inventory.
+     * 
+     * @author Zak Borman
+     * @param stmt A Statement object for executing SQL queries.
+     * @param inventoryTableModel Model of the table containing current inventory.
+     */
+    public static void refreshInventory(Statement stmt, DefaultTableModel inventoryModel) {
+        columnNames = database.getColumnNames(stmt, "ingredient");
+        inventory = database.ViewTable(stmt, columnNames, "ingredient").stream().map(x -> x.toArray(new String[0])).toArray(String[][]::new);
+        
+        inventoryModel.setDataVector(inventory, columnNames);
+    }
+
+    /**
+     * Refreshes the menu item list and ingredient list when editing menu.
+     * 
+     * @author Zak Borman
+     * @param stmt A Statement object for executing SQL queries.
+     * @param menuListModel Model of the list containing current menu items.
+     * @param ingredientList Model of the list containing checkboxes for selected ingredients.
+     */
+    public static void refreshMenu(Statement stmt, DefaultListModel<String> menuListModel, DefaultListModel<JCheckBox> ingredientListModel) {
+        menuItems = database.getSpecifiedTableValues(stmt, "menu_item", "name");
+        ingredients = database.getSpecifiedTableValues(stmt, "ingredient", "name");
+        
+        // Update the model of the menuList
+        menuListModel.clear();
+        for (String item : menuItems) {
+            menuListModel.addElement(item);
+        }
+
+        // Clear and update the ingredientList
+        ingredientListModel.clear();
+        for (String i : ingredients) {
+            JCheckBox ingredient = new JCheckBox(i);
+            ingredientListModel.addElement(ingredient);
+        }
+    }
+
+    /**
      * Creates and returns a new JFrame for the Manager's view in the Point of Sale (POS) System.
      * This JFrame serves as the graphical user interface for the Manager, providing access to the Manager's functionalities.
      * 
@@ -153,22 +193,17 @@ public class Manager_GUI extends JFrame {
         }
 
         //System.out.println("Opened database successfully");
-
-        inventory = new Object[0][0];
-        String[] columnNames = new String[0];
-        SQLCalls database = new SQLCalls();
-
         try {
             Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             columnNames = database.getColumnNames(stmt, "ingredient");
             inventory = database.ViewTable(stmt, columnNames, "ingredient").stream().map(x -> x.toArray(new String[0])).toArray(String[][]::new);
             menuItems = database.getSpecifiedTableValues(stmt, "menu_item", "name");
             ingredients = database.getSpecifiedTableValues(stmt, "ingredient", "name");
-            conn.close();
-        } 
+        }
         catch (Exception e) {
             JOptionPane.showMessageDialog(null,"Error accessing Database 1.");
         }
+        
 
         //closing the connection
         try {
@@ -256,6 +291,8 @@ public class Manager_GUI extends JFrame {
                 try{
                     Statement stmt = connfunc.createStatement();
                     database.UpdateTable(stmt, quantity, "ingredient", "quantity", "name", ingredientField.getText());
+
+                    refreshInventory(stmt, inventoryModel);
                 }
                 catch(Exception e){
                     JOptionPane.showMessageDialog(null,"Error accessing Database 2.");
@@ -289,6 +326,8 @@ public class Manager_GUI extends JFrame {
                     Statement stmt = connfunc.createStatement();
                     Object[] values = {inventory.length + 2, quantityField.getText(), restockPriceField.getText(), ingredientField.getText()};
                     database.AddItem("ingredient", stmt, values);
+
+                    refreshInventory(stmt, inventoryModel);
                 }
                 catch(Exception e){
                     JOptionPane.showMessageDialog(null,"Error accessing Database 2.");
@@ -322,6 +361,8 @@ public class Manager_GUI extends JFrame {
                     Statement stmt = connfunc.createStatement();
                     database.UpdateTable(stmt, quantityField.getText(), "ingredient", "quantity", "name", ingredientField.getText());
                     database.UpdateTable(stmt, restockPriceField.getText(), "ingredient", "restock_price", "name", ingredientField.getText());
+                    
+                    refreshInventory(stmt, inventoryModel);
                 }
                 catch(Exception e){
                     JOptionPane.showMessageDialog(null,"Error accessing Database 2.");
@@ -354,6 +395,7 @@ public class Manager_GUI extends JFrame {
                 try{
                     Statement stmt = connfunc.createStatement();
                     database.deleteItem(stmt, "ingredient", "name", "'" + ingredientField.getText() + "'");
+                    refreshInventory(stmt, inventoryModel);
                 }
                 catch(Exception e){
                     JOptionPane.showMessageDialog(null,"Error accessing Database 2.");
@@ -374,7 +416,12 @@ public class Manager_GUI extends JFrame {
         JPanel menuButtonPanel = new JPanel();
         menuButtonPanel.setLayout(new BoxLayout(menuButtonPanel, BoxLayout.Y_AXIS));
 
-        JList<String> menuList = new JList<>(menuItems);
+        JList<String> menuList = new JList<>();
+        DefaultListModel<String> menuListModel = new DefaultListModel<>();
+        for (String i : menuItems) {
+            menuListModel.addElement(i);
+        }
+        menuList.setModel(menuListModel);
         JScrollPane menuPane = new JScrollPane(menuList);
         
         JTextField menuItemField = new JTextField(20);
@@ -390,18 +437,18 @@ public class Manager_GUI extends JFrame {
         
 
         JList<JCheckBox> ingredientList = new JList<>();
-        DefaultListModel<JCheckBox> menuModel = new DefaultListModel<>();
+        DefaultListModel<JCheckBox> ingredientListModel = new DefaultListModel<>();
         for (String i : ingredients) {
             JCheckBox ingredient = new JCheckBox(i);
-            menuModel.addElement(ingredient);
+            ingredientListModel.addElement(ingredient);
         }
-        ingredientList.setModel(menuModel);
+        ingredientList.setModel(ingredientListModel);
         ingredientList.setCellRenderer(new CheckBoxListCellRenderer());
         JScrollPane ingredientPane = new JScrollPane(ingredientList);
 
         menuList.addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent j) {
-                if (!j.getValueIsAdjusting()) {
+                if (!j.getValueIsAdjusting() && !menuList.isSelectionEmpty()) {
                     // TODO: Get data of item selected in list
                     // fill menuItemField, priceField and select
                     // checkboxes of ingredients in item
@@ -411,7 +458,7 @@ public class Manager_GUI extends JFrame {
                     String[] selectedIngredientsID = new String[0];
                     String[] selectedIngredients = new String[0];
                     
-                   try {
+                    try {
                         connfunc = DriverManager.getConnection(dbURL, username, password);
                     } 
                     catch (Exception e) {
@@ -426,6 +473,7 @@ public class Manager_GUI extends JFrame {
                         Statement stmt = connfunc.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
                         priceValue = database.getOneTableValue(stmt, "menu_item", "price", "name", (String) menuList.getSelectedValue());
                         menuID = database.getOneTableValue(stmt, "menu_item", "id", "name", (String) menuList.getSelectedValue());
+                        System.out.println(menuID);
                         selectedIngredientsID = database.getMultipleTableValues(stmt, "ingredient_menu_item_join_table", "ingredient_id", "menu_item_id", menuID);
                         selectedIngredients = new String[selectedIngredientsID.length];
                         for(int i = 0; i < selectedIngredientsID.length; i++){
@@ -449,18 +497,18 @@ public class Manager_GUI extends JFrame {
                     priceField.setText(priceValue);
 
                     for(int i = 0; i < ingredients.length; i++){
-                        menuModel.getElementAt(i).setSelected(false);
+                        ingredientListModel.getElementAt(i).setSelected(false);
                     }
 
                     for(int i = 0; i < ingredients.length; i++){
                         for(int k = 0; k < selectedIngredients.length; k++){
-                            if(menuModel.getElementAt(i).getText().equals(selectedIngredients[k])){
-                                menuModel.getElementAt(i).setSelected(true);
+                            if(ingredientListModel.getElementAt(i).getText().equals(selectedIngredients[k])){
+                                ingredientListModel.getElementAt(i).setSelected(true);
                             }
                         }
                     }
 
-                    ingredientList.setModel(menuModel);
+                    ingredientList.setModel(ingredientListModel);
                     ingredientList.setCellRenderer(new CheckBoxListCellRenderer());
                 }
             }
@@ -501,8 +549,8 @@ public class Manager_GUI extends JFrame {
                 try{
                     Statement stmt = connfunc.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
                     for(int i = 0; i < ingredients.length; i++){
-                        if(menuModel.getElementAt(i).isSelected() == true){
-                            selectedCheckboxes.add((String) menuModel.getElementAt(i).getText());
+                        if(ingredientListModel.getElementAt(i).isSelected() == true){
+                            selectedCheckboxes.add((String) ingredientListModel.getElementAt(i).getText());
                         }
                     }
                     selectedCheckboxesIDs = new Object[selectedCheckboxes.size()];
@@ -523,9 +571,13 @@ public class Manager_GUI extends JFrame {
                         Object[] inputVals = {CashierCalls.getNextMenuItemIngredientJoinId(), selectedCheckboxesIDs[i], menuItemID};
                         database.AddItem("ingredient_menu_item_join_table", stmt, inputVals);
                     }
+
+                    refreshMenu(stmt, menuListModel, ingredientListModel);
                 }
                 catch(Exception e){
                     JOptionPane.showMessageDialog(null,"Error accessing Database 4.");
+                    e.printStackTrace();
+                    System.err.println(e.getClass().getName()+": "+e.getMessage());
                 }
 
                 try {
@@ -564,19 +616,29 @@ public class Manager_GUI extends JFrame {
                         String selectedIngredientItemID = database.getOneTableValue(stmt, "ingredient", "id", "name", ingredients[i]);
                         String condition = "menu_item_id = " + selectedMenuItemID + " AND ingredient_id = " + selectedIngredientItemID;
 
-                        if(menuModel.getElementAt(i).isSelected() == true && "FALSE".equals(database.checkIfValueExists(stmt, "ingredient_menu_item_join_table", "join_id", "join_id",condition))){
-                            selectedCheckboxes = (String) menuModel.getElementAt(i).getText();
+                        if(ingredientListModel.getElementAt(i).isSelected() == true && "FALSE".equals(database.checkIfValueExists(stmt, "ingredient_menu_item_join_table", "join_id", "join_id",condition))){
+                            selectedCheckboxes = (String) ingredientListModel.getElementAt(i).getText();
                             selectedCheckboxesIDs = database.getOneTableValue(stmt, "ingredient", "id", "name", selectedCheckboxes);
                             
                             Object[] inputVals = {CashierCalls.getNextMenuItemIngredientJoinId(), selectedCheckboxesIDs, selectedMenuItemID};
-                            for(int z = 0; z < inputVals.length; ++z) {
-                                System.out.println(inputVals[z]);
-                            }
-                            System.out.println("Spot 4");
                             database.AddItem("ingredient_menu_item_join_table", stmt, inputVals);
-                            System.out.println("Spot 5");
+                        }
+                        else if(ingredientListModel.getElementAt(i).isSelected() == false && "TRUE".equals(database.checkIfValueExists(stmt, "ingredient_menu_item_join_table", "join_id", "join_id",condition))){
+                            selectedCheckboxes = (String) ingredientListModel.getElementAt(i).getText();
+                            selectedCheckboxesIDs = database.getOneTableValue(stmt, "ingredient", "id", "name", selectedCheckboxes);
+
+                            try {
+                                stmt.executeUpdate("DELETE FROM ingredient_menu_item_join_table WHERE ingredient_id = " + selectedCheckboxesIDs + " AND menu_item_id = " + selectedMenuItemID);
+                            }
+                            catch (Exception e) {
+                                e.printStackTrace();
+                                System.err.println(e.getClass().getName()+": "+e.getMessage());
+                                System.exit(0);
+                            }
                         }
                     }
+
+                    refreshMenu(stmt, menuListModel, ingredientListModel);
                 }
                 catch(Exception e){
                     JOptionPane.showMessageDialog(null,"Error accessing Database 5.");
@@ -589,7 +651,6 @@ public class Manager_GUI extends JFrame {
                 catch (Exception e) {
                     JOptionPane.showMessageDialog(null,"Connection NOT Closed.");
                 }
-
             }
         });
 
@@ -616,7 +677,9 @@ public class Manager_GUI extends JFrame {
                     String menuItemID = database.getOneTableValue(stmt, "menu_item", "id", "name", (String) menuList.getSelectedValue());
                     database.deleteItem(stmt, "ingredient_menu_item_join_table", "menu_item_id", menuItemID);
                     database.deleteItem(stmt, "menu_item", "id", menuItemID);
-
+                    menuListModel.removeElement(menuList.getSelectedValue());
+                    menuList.clearSelection();
+                    refreshMenu(stmt, menuListModel, ingredientListModel);
                 }
                 catch(Exception e){
                     JOptionPane.showMessageDialog(null,"Error accessing Database 6.");
@@ -631,7 +694,6 @@ public class Manager_GUI extends JFrame {
                 catch (Exception e) {
                     JOptionPane.showMessageDialog(null,"Connection NOT Closed.");
                 }
-                
             }
         });
 
@@ -799,7 +861,7 @@ public class Manager_GUI extends JFrame {
                             ArrayList<String> ingredientIDs = new ArrayList<String>();
                             //priceField.setText(menuIDs.get(i).get(j));
                             //priceField.setText(Integer.toString(menuIDs.get(i).size()));
-                            ingredientList.setModel(menuModel);
+                            ingredientList.setModel(ingredientListModel);
                             ingredientList.setCellRenderer(new CheckBoxListCellRenderer());
                             String[] strings = database.getMultipleTableValues(stmt, "ingredient_menu_item_join_table", "ingredient_id", "menu_item_id", menuIDs.get(i).get(j));
                             ingredientIDs = (new ArrayList<String>(Arrays.asList(strings)));

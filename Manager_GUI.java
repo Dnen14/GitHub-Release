@@ -870,37 +870,44 @@ public class Manager_GUI extends JFrame {
         });
 
         restockReportButton.addActionListener(new ActionListener () {
-            public void actionPerformed(ActionEvent j) {
+            /*
+                displays all of the ingredients that are below the restock report
+                @author Brandon Thomas
+            */
+            public void actionPerformed(ActionEvent event) {
                 // Display the list of inventory items whose current inventory is less than 
                 // the inventory item's minimum amount to have around before needing to restock
-                
-                Connection connfunc = null;
-
-                try {
-                    connfunc = DriverManager.getConnection(dbURL, username, password);
-                } 
-                catch (Exception e) {
-                    e.printStackTrace();
-                    System.err.println(e.getClass().getName()+": "+e.getMessage());
-                    System.exit(0);
+                ArrayList<Ingredient> ings = CashierCalls.getUnderStockedIngredients();
+                Object[][] obj_arr = new Object[ings.size()][5];
+                for(int i = 0; i < ings.size(); i++){
+                    for(int j = 0; j < 5; j++){
+                        switch (j){
+                            case 0:
+                                obj_arr[i][j] = ings.get(i).getId();
+                                break;
+                            case 1:
+                                obj_arr[i][j] = ings.get(i).getName();
+                                break;
+                            case 2:
+                                obj_arr[i][j] = ings.get(i).getQuantity();
+                                break;
+                            case 3:
+                                obj_arr[i][j] = ings.get(i).getRestockPrice();
+                                break;
+                            case 4:
+                                obj_arr[i][j] = ings.get(i).getThreshold();
+                                break;
+                        }
+                    }
                 }
 
-                //System.out.println("Opened database successfully");
+                JPanel inventoryReportPanel = new JPanel();
+                DefaultTableModel inventoryReportModel = new DefaultTableModel(obj_arr, new String[]{"id","Name","Quantity","Restock Price","Threshold"});
+                JTable inventoryReportTable = new JTable(inventoryReportModel);
+                JScrollPane inventoryReportPane = new JScrollPane(inventoryReportTable);
+                inventoryReportPanel.add(inventoryReportPane);
+                JOptionPane.showConfirmDialog(null, inventoryReportPanel, "Restock Report", JOptionPane.DEFAULT_OPTION);
 
-                try{
-                    Statement stmt = connfunc.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-                }
-                catch(Exception e){
-                    JOptionPane.showMessageDialog(null,"Error accessing Database 8.");
-                }
-
-                try {
-                    connfunc.close();
-                    //System.out.println("Connection Closed.");
-                } 
-                catch (Exception e) {
-                    JOptionPane.showMessageDialog(null,"Connection NOT Closed.");
-                }
             }
         });
 
@@ -958,7 +965,7 @@ public class Manager_GUI extends JFrame {
  * This class allows rendering JCheckBoxes within a JList and customizes their appearance and behavior.
  * This class is used in the Manager_GUI class to render the checkboxes for the ingredients in the menu item
  * 
- * @author Zak or Abhinav?
+ * @author Zak Borman
  * @version 1.0
  * @since Oct 3, 2023
  */

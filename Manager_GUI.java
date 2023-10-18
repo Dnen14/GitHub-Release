@@ -560,7 +560,6 @@ public class Manager_GUI extends JFrame {
                     Statement stmt = connfunc.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
                     database.UpdateTable(stmt,(Object) priceField.getText(), "menu_item", "price", "name", menuList.getSelectedValue());
                     String selectedMenuItemID = database.getOneTableValue(stmt, "menu_item", "id", "name", menuList.getSelectedValue());
-                    
                     for(int i = 0; i < ingredients.length; i++){
                         String selectedIngredientItemID = database.getOneTableValue(stmt, "ingredient", "id", "name", ingredients[i]);
                         String condition = "menu_item_id = " + selectedMenuItemID + " AND ingredient_id = " + selectedIngredientItemID;
@@ -571,8 +570,13 @@ public class Manager_GUI extends JFrame {
                             selectedCheckboxesIDs = database.getOneTableValue(stmt, "ingredient", "id", "name", selectedCheckboxes);
                             Random num = new Random();
                             
-                            Object[] inputVals = {num.nextInt(10000)+1, selectedCheckboxesIDs, menuItems.length};
+                            Object[] inputVals = {num.nextInt(10000)+1, selectedCheckboxesIDs, selectedMenuItemID};
+                            for(int z = 0; z < inputVals.length; ++z) {
+                                System.out.println(inputVals[z]);
+                            }
+                            System.out.println("Spot 4");
                             database.AddItem("ingredient_menu_item_join_table", stmt, inputVals);
+                            System.out.println("Spot 5");
                         }
                     }
                 }
@@ -619,9 +623,11 @@ public class Manager_GUI extends JFrame {
                     }
                 
                     selectedIDs = new String[count];
+                    int k = 0;
                     for(int i = 0; i < ingredients.length; i++){
                          if(menuModel.getElementAt(i).isSelected() == true){
-                            selectedIDs[i] = database.getOneTableValue(stmt, "ingredient", "id", "name", menuModel.getElementAt(i).getText());
+                            selectedIDs[k] = database.getOneTableValue(stmt, "ingredient", "id", "name", menuModel.getElementAt(i).getText());
+                            k++;
                         }
                     }
 
@@ -631,6 +637,8 @@ public class Manager_GUI extends JFrame {
                 }
                 catch(Exception e){
                     JOptionPane.showMessageDialog(null,"Error accessing Database 6.");
+                    e.printStackTrace();
+                    System.err.println(e.getClass().getName()+": "+e.getMessage());
                 }
 
                 try {

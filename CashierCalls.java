@@ -288,11 +288,15 @@ public final class CashierCalls extends SQLCalls{
         ArrayList<Ingredient> ingredients = new ArrayList<Ingredient>();
         try{
             for(ArrayList<String> str_ingredient: str_ingredients){
-                Ingredient ing = new Ingredient(Long.valueOf(str_ingredient.get(0)).longValue(),
-                                                str_ingredient.get(1),
-                                                Double.valueOf(str_ingredient.get(2)).doubleValue(),
-                                                Double.valueOf(str_ingredient.get(3)).doubleValue(),
-                                                Double.valueOf(str_ingredient.get(4)).doubleValue());
+                /*
+                for(int i = 0; i < 5; i++){
+                    System.out.println(str_ingredient.get(i));
+                }*/
+                Ingredient ing = new Ingredient(Long.valueOf(str_ingredient.get(0)).longValue(),//id
+                                                str_ingredient.get(3),//name
+                                                Double.valueOf(str_ingredient.get(2)).doubleValue(),//price
+                                                Double.valueOf(str_ingredient.get(1)).doubleValue(),//quantity
+                                                Double.valueOf(str_ingredient.get(4)).doubleValue());//threshold
 
                 ingredients.add(ing);
             }

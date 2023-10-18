@@ -6,7 +6,6 @@ import java.time.Instant;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
-import java.util.Random;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -564,7 +563,6 @@ public class Manager_GUI extends JFrame {
                         String condition = "menu_item_id = " + selectedMenuItemID + " AND ingredient_id = " + selectedIngredientItemID;
 
                         if(menuModel.getElementAt(i).isSelected() == true && "FALSE".equals(database.checkIfValueExists(stmt, "ingredient_menu_item_join_table", "join_id", "join_id",condition))){
-                            priceField.setText(condition);
                             selectedCheckboxes = (String) menuModel.getElementAt(i).getText();
                             selectedCheckboxesIDs = database.getOneTableValue(stmt, "ingredient", "id", "name", selectedCheckboxes);
                             

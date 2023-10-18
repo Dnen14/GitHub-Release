@@ -8,11 +8,11 @@ import java.time.*;
 */
 public final class CashierCalls extends SQLCalls{
     
-    /*
-        submits an order to the SQL database and adds all of the proper join table items
-        @author Brandon Thomas
-        @param items - list of menu items in the order
-        @param c - customer that placed the order
+    /**
+     *   submits an order to the SQL database and adds all of the proper join table items
+     *   @author Brandon Thomas
+     *   @param items - list of menu items in the order
+     *   @param c - customer that placed the order
     */
     public static void submitOrder(ArrayList<MenuItem> items, Customer c){
         Connection conn = null;
@@ -114,11 +114,16 @@ public final class CashierCalls extends SQLCalls{
         }
     }
 
-    /*
-        gets all of the ingredients that are under their respective stock threshold
-        @author Brandon Thomas
-        @returns all Ingredients that are understocked
-    */
+    /**
+     * Retrieves a list of understocked ingredients from the inventory.
+     *
+     * This method scans the list of ingredients in the inventory and identifies those
+     * that have quantities below their specified restocking threshold. It returns an
+     * ArrayList of understocked ingredients.
+     * 
+     * @ author Brandon Thomas
+     * @return An ArrayList of Ingredient objects representing the understocked ingredients.
+     */
     public static ArrayList<Ingredient> getUnderStockedIngredients(){
         ArrayList<Ingredient> understocked = new ArrayList<Ingredient>();
         ArrayList<Ingredient> ingredients = getIngredients();
@@ -130,41 +135,48 @@ public final class CashierCalls extends SQLCalls{
         return understocked;
     }
 
-    /*
-        gets the next available id in the sql order_table
-        @author Brandon Thomas
-        @return a long containing the next available id of an order
-        @throws no errors
-    */
+    /**
+     * gets the next available id in the order table of the database
+     * 
+     *  @author Brandon Thomas
+     *  @return a long containing the next available id of an order
+     *  @throws no errors
+     */
     public static long getNextOrderId(){
         return getNextTableId("order_table");
     }
 
-    /*
-        @author Brandon Thomas
-        @return long containing the next available id in the menu item order join table of the database
-    */
+    /**
+     * gets the next available id in the menu item table of the database
+     * 
+     *  @author Brandon Thomas
+     * @return long containing the next available id in the menu item order join table of the database
+     */
     public static long getNextMenuOrderJoinId(){
         return getNextTableId("menu_item_order_join_table");
     }
 
-    /*
-        @author Brandon Thomas
-        @return long containing the next available id in the customer table of the database
-    */
+    /**
+     * gets the next available id in the customer table of the database
+     * 
+     * @author Brandon Thomas
+     *  @return long containing the next available id in the customer table of the database
+     */
     public static long getNextCustomerId(){
         return getNextTableId("customer");
     }
 
-    /*
-        @author Brandon Thomas
-        @return long containing the next available id in the menu item order join table of the database
-    */
+    /**
+     * gets the next available id in the customer order join table of the database
+     * 
+     *  @author Brandon Thomas
+     *  @return long containing the next available id in the menu item order join table of the database
+     */
     public static long getNextCustomerOrderJoinId(){
         return getNextTableId("customer_order_join_table");
     }
 
-    /*
+    /**
         @author Brandon Thomas
         @param table - the table to get the next available id from
         @return a long containing the next available id from the table
@@ -203,9 +215,12 @@ public final class CashierCalls extends SQLCalls{
         return id + 1;
     }
 
-    /*
-        @author Brandon Thomas
-        @returns all of the menu items in the database  
+    /**
+     * 
+     * gets all of the menu items in the database
+     * 
+     * @author Brandon Thomas
+     * @returns all of the menu items in the database as an ArrayList<MenuItem>
     */
     public static ArrayList<MenuItem> getMenuItems(){
         Connection conn = null;
@@ -257,10 +272,12 @@ public final class CashierCalls extends SQLCalls{
         return ret;
     }
 
-    /*
-        @author Brandon Thomas
-        @returns all of the ingredients in the database  
-    */
+    /**
+     * gets all of the ingredients in the database
+     * 
+     * @author Brandon Thomas
+     * @return ArrayList<Ingredient> a list containing all of the ingredients in the database
+     */
     public static ArrayList<Ingredient> getIngredients(){
         Connection conn = null;
         try {
@@ -308,10 +325,12 @@ public final class CashierCalls extends SQLCalls{
         return ingredients;
     }
 
-    /*
-        @author Brandon Thomas
-        @return ArrayList<Customer> a list containing all of the customers in the db
-    */
+    /**
+     * gets all of the customers in the database
+     * 
+     * @author Brandon Thomas
+     * @return ArrayList<Customer> a list containing all of the customers in the database      
+     */
     public static ArrayList<Customer> getCustomers(){
         Connection conn = null;
         try {
@@ -356,11 +375,13 @@ public final class CashierCalls extends SQLCalls{
         return customers;
     }
 
-    /*
-        @author Brandon Thomas
-        @param ArrayList<MenuItem> items - a list of all of the items in an order
-        @return double - total price of all of the items in the list
-    */
+    /**
+     * gets the total price of all of the items in an order
+     * 
+     * @author Brandon Thomas
+     *  @param ArrayList<MenuItem> items - a list of all of the items in an order
+     *  @return double - total price of all of the items in the list
+     */
     public static double getTotal(ArrayList<MenuItem> items){
         double total = 0.0;
         for(MenuItem item : items){

@@ -10,6 +10,16 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
+/**
+ * The Cashier_GUI class represents the graphical user interface for a cashier in a point-of-sale system.
+ *
+ * This class allows cashiers to create and manage customer orders, select menu items, and proceed with checkout.
+ * It also provides the functionality to switch to the manager view and submit orders to the database.
+ *
+ * @author Rahul Singh
+ * @version 3.0
+ * @since Oct 11, 2023
+ */
 public class Cashier_GUI extends JFrame {
     private static Connection conn = null;
     private static ArrayList<MenuItem> orderSummary = new ArrayList<>();
@@ -18,12 +28,28 @@ public class Cashier_GUI extends JFrame {
     private static JFrame cashierFrame;
     private static JFrame managerFrame;
 
+    /**
+     * Main method to launch the Cashier POS System GUI.
+     *
+     * Creates the Cashier POS System frame and makes it visible.
+     * @author Rahul Singh
+     * @param args Command-line arguments (not used).
+     */
     public static void main(String[] args) {
         // Create the Cashier POS System frame
         cashierFrame = createCashierFrame();
         cashierFrame.setVisible(true);
     }
 
+    /**
+     * Creates the Cashier POS System frame.
+     *
+     * This method sets up the Cashier GUI frame, including order summary, menu items, total label,
+     * and checkout buttons. It also handles the connection to the database and the switch to the Manager view.
+     * @author Rahul Singh
+     * @return A new instance of a JFrame to switch to the Manager's view.
+     * @see Manager_GUI#createManagerFrame()
+     */
     public static JFrame createCashierFrame() {
 
         //Building the connection
@@ -78,7 +104,7 @@ public class Cashier_GUI extends JFrame {
                 // Display the login panel and proceed if the credentials are valid
                 if (Manager_GUI.managerSecurity()) {
                     frame.dispose(); // Close the current frame
-                    managerFrame.setVisible(true); // Show the Manager GUI frame
+                    //managerFrame.setVisible(true); // Show the Manager GUI frame
                 }
             }
         });
@@ -97,6 +123,16 @@ public class Cashier_GUI extends JFrame {
         return frame;   
     }
 
+    /**
+     * Creates a panel displaying menu items as buttons for selection.
+     *
+     * This method constructs a JPanel that displays a grid of menu items as buttons for the user to select.
+     * Each button represents a menu item with its name and price, and clicking a button adds the selected item
+     * to the order summary.
+     * 
+     * @author Rahul Singh
+     * @return A JPanel containing menu items displayed as buttons.
+     */
     private static JPanel createMenuPanel() {
         JPanel menuPanel = new JPanel();
         menuPanel.setLayout(new GridLayout(0, 3));
@@ -120,6 +156,15 @@ public class Cashier_GUI extends JFrame {
         return menuPanel;
     }
 
+    /**
+     * Creates a panel to display the order summary and item selection instructions.
+     *
+     * This method constructs a JPanel that is used to display the current order summary and provides instructions
+     * for selecting items to add to the order. It uses a vertical layout to stack components.
+     *
+     * @author Rahul Singh
+     * @return A JPanel for displaying the order summary and item selection instructions.
+     */
     private static JPanel createOrderSummaryPanel() {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -127,6 +172,16 @@ public class Cashier_GUI extends JFrame {
         return panel;
     }
 
+    /**
+     * Creates a panel for checkout and cancellation options.
+     *
+     * This method constructs a JPanel that contains buttons for checkout and order clearance.
+     * It provides event listeners for these buttons to trigger the display of a customer information dialog
+     * or the clearing of the order summary.
+     *
+     * @author Rahul Singh
+     * @return A JPanel containing checkout and cancellation buttons.
+     */
     private static JPanel createCheckoutPanel() {
         JPanel checkoutPanel = new JPanel();
         JButton checkoutButton = new JButton("Checkout");
@@ -152,55 +207,15 @@ public class Cashier_GUI extends JFrame {
         return checkoutPanel;
     }
 
+    /**
+     * Updates the order summary panel with the current list of selected items.
+     *
+     * This method refreshes the order summary panel by displaying the list of selected items, their total price,
+     * and provides the ability to remove items from the order. It uses a scrollable list for item display.
+     * 
+     * @author Rahul Singh
+     */
     private static void updateOrderSummary() { 
-        /*
-        orderSummaryPanel.removeAll(); // Clear the order summary panel
-
-        // Calculate and display the total
-        double total = orderSummary.stream().mapToDouble(MenuItem::getPrice).sum();
-        DecimalFormat df = new DecimalFormat("#.00");
-        totalLabel.setText("Total: $" + df.format(total));
-
-        // Create a JPanel to hold the items
-         JPanel itemsPanel = new JPanel();
-         itemsPanel.setLayout(new BoxLayout(itemsPanel, BoxLayout.Y_AXIS));
-
-        
-        for (MenuItem menuItem : orderSummary) {
-            
-            JPanel itemPanel = new JPanel();
-            JButton removeButton = new JButton("X");
-            removeButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    // Remove the selected item from the order summary
-                    orderSummary.remove(menuItem);
-                    updateOrderSummary();
-                }
-            });
-            JLabel itemLabel = new JLabel(menuItem.getName() + " - $" + menuItem.getPrice());
-            itemPanel.add(removeButton);
-            itemPanel.add(itemLabel);
-            // itemPanel.setAlignmentY(Component.TOP_ALIGNMENT);
-            itemsPanel.add(itemPanel);
-            
-        }
-
-        // Create a JScrollPane and add the itemsPanel to it
-        JScrollPane scrollPane = new JScrollPane(itemsPanel);
-        orderSummaryPanel.add(scrollPane);
-        orderSummaryPanel.setBackground(new Color(200, 200, 200));
-
-        if (orderSummary.isEmpty()) {
-            JLabel label = new JLabel("<html><div style='text-align: center;'>Select an item to add to the order</div></html>");
-            orderSummaryPanel.add(label);
-        }
-        
-        
-        orderSummaryPanel.revalidate(); // Refresh the order summary panel
-        orderSummaryPanel.repaint();
-        */
-        
         orderSummaryPanel.removeAll(); // Clear the order summary panel
 
         // Create a JPanel to hold the items
@@ -249,6 +264,16 @@ public class Cashier_GUI extends JFrame {
 
     }
 
+    /**
+     * Displays a dialog for entering customer information before checkout.
+     *
+     * This method shows a dialog that allows the user to enter the customer's name and email address
+     * before proceeding with the checkout process. If valid information is provided, it creates a new
+     * Customer instance and submits the order. If information is missing, an error message is displayed.
+     * 
+     * @author Rahul Singh
+     * 
+     */
     private static void showCustomerInfoDialog() {
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(3, 2));
@@ -277,59 +302,58 @@ public class Cashier_GUI extends JFrame {
             }
         }
     }
-
-    /* Want to implement this later for customizing menu items */
-    // private static void showIngredientSelectionDialog(MenuItem menuItem) {
-    //     JDialog dialog = new JDialog();
-    //     dialog.setTitle("Select Ingredients");
-
-    //     JPanel ingredientPanel = new JPanel();
-    //     ingredientPanel.setLayout(new BoxLayout(ingredientPanel, BoxLayout.Y_AXIS));
-
-    //     // Fetch ingredients for the selected menu item from the database
-    //     List<Ingredient> ingredients = getIngredientsForMenuItem(menuItem);
-
-    //     for (Ingredient ingredient : ingredients) {
-    //         JCheckBox checkbox = new JCheckBox(ingredient.getName(), true); // Selected by default
-    //         ingredientPanel.add(checkbox);
-    //     }
-
-    //     JButton addToOrderButton = new JButton("Add to Order");
-    //     addToOrderButton.addActionListener(new ActionListener() {
-    //         @Override
-    //         public void actionPerformed(ActionEvent e) {
-    //             // Process selected ingredients and add the customized item to the order summary
-    //             // You can implement this logic here
-    //             dialog.dispose();
-    //         }
-    //     });
-
-    //     JButton cancelButton = new JButton("Cancel Item");
-    //     cancelButton.addActionListener(new ActionListener() {
-    //         @Override
-    //         public void actionPerformed(ActionEvent e) {
-    //             dialog.dispose();
-    //         }
-    //     });
-
-    //     dialog.add(ingredientPanel, BorderLayout.CENTER);
-    //     dialog.add(addToOrderButton, BorderLayout.SOUTH);
-    //     dialog.add(cancelButton, BorderLayout.SOUTH);
-    //     dialog.pack();
-    //     dialog.setVisible(true);
-    // }
-
+ 
+    /**
+     * Retrieves the list of menu items from the database.
+     *
+     * This method fetches a list of menu items from a database or data source and returns them for display
+     * in the Cashier GUI.
+     * @author Rahul Singh
+     * @return An ArrayList of menu items.
+     */
     private static ArrayList<MenuItem> getMenuItems() {
         return CashierCalls.getMenuItems();
     }
 
+    /**
+     * Clears the order summary and updates the total label.
+     *
+     * This method clears the order summary and updates the total label to reflect the change.
+     * It is used to clear the order summary after an order is submitted.
+     * 
+     * @author Rahul Singh
+     */
     private static void clearOrderSummary() {
         orderSummary.clear();
         updateOrderSummary();
     }
 }
 
+/**
+ * The MenuItemRenderer class represents a custom renderer for the menu items list.
+ *
+ * This class allows the menu items list to display the name and price of each menu item.
+ * It is used in the Cashier_GUI class to display the menu items in the menu panel.
+ * 
+ * @author Rahul Singh
+ * @version 1.0
+ * @see Cashier_GUI#createMenuPanel()
+ */
 class MenuItemRenderer extends DefaultListCellRenderer {
+    /**
+     * Customizes the rendering of menu items in a list component.
+     *
+     * This method overrides the behavior of the DefaultListCellRenderer's rendering process
+     * to display menu items with their names and prices.
+     * 
+     * @author Rahul Singh
+     * @param list        The JList component that displays the items.
+     * @param value       The value (menu item) to be rendered.
+     * @param index       The index of the item in the list.
+     * @param isSelected  True if the item is selected, false otherwise.
+     * @param cellHasFocus True if the cell has focus, false otherwise.
+     * @return The customized rendering component for the menu item.
+     */
     @Override
     public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);

@@ -17,6 +17,20 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
+/**
+ * The Manager_GUI class represents the graphical user interface for the Manager's view
+ * in the Point of Sale (POS) System.
+ *
+ * This class provides functionalities for the Manager, including the display of the Manager POS System
+ * and authentication using the `managerSecurity` method.
+ *
+ * @author Rahul Singh
+ * @author Brandon Thomas
+ * @author Zak Borman
+ * @author Abhinav Nallam
+ * @version 3.0
+ * @since Oct 3, 2023
+ */
 public class Manager_GUI extends JFrame {
     private static String dbURL = "jdbc:postgresql://csce-315-db.engr.tamu.edu/csce315331_09m_db";
     private static String username = "csce315_909_rahul_2003";
@@ -32,11 +46,23 @@ public class Manager_GUI extends JFrame {
     public static ArrayList<String> orderIDs = new ArrayList<String>();
     public static ArrayList<String> excessReportList = new ArrayList<String>();
 
-
+    /**
+     * The main entry point of the program.
+     * @author Rahul Singh
+     * @author Brandon Thomas
+     * @author Zak Borman
+     * @author Abhinav Nallam
+     * @param args Command-line arguments (not used in this program).
+     */
     public static void main(String[] args) {
         managerSecurity();
     }
 
+    /**
+     * Displays a login panel to authenticate the user before granting access to the Manager POS System.
+     * @author Rahul Singh
+     * @return True if the user successfully authenticated and gained access to the Manager POS System, false otherwise.
+     */
     public static boolean managerSecurity() {
         while (true) {
             JPanel panel = new JPanel();
@@ -70,6 +96,14 @@ public class Manager_GUI extends JFrame {
         }
     }
 
+    /**
+     * Verifies user credentials against a database.
+     *
+     * @author Rahul Singh
+     * @param name The name provided by the user.
+     * @param pin The PIN provided by the user.
+     * @return True if the provided credentials match a record in the database, false otherwise.
+     */
     public static boolean verifyCredentials(String name, String pin) {
         // Verify credentials against database
         try {
@@ -96,6 +130,17 @@ public class Manager_GUI extends JFrame {
         return false;
     }
 
+    /**
+     * Creates and returns a new JFrame for the Manager's view in the Point of Sale (POS) System.
+     * This JFrame serves as the graphical user interface for the Manager, providing access to the Manager's functionalities.
+     * 
+     * @author Rahul Singh
+     * @author Brandon Thomas
+     * @author Zak Borman
+     * @author Abhinav Nallam
+     * @return A new instance of a JFrame to switch to the Cashier's view.
+     * @see Cashier_GUI#createCashierFrame()
+     */
     public static JFrame createManagerFrame() {    
 
         //Building the connection
@@ -672,6 +717,9 @@ public class Manager_GUI extends JFrame {
 
 
                     // Create a pop-up window to display the sales report
+                    JFrame popupFrame = new JFrame("Sales Report in between " + startTime + " and " + endTime);
+                    popupFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
                     JPanel popupPanel = new JPanel(new BorderLayout());
 
                     // Create a JTable to display the results
@@ -910,7 +958,29 @@ public class Manager_GUI extends JFrame {
     }
 }
 
+/**
+ * The CheckBoxListCellRenderer class extends JCheckBox and implements the ListCellRenderer interface
+ * to provide a custom rendering component for JLists with checkboxes.
+ *
+ * This class allows rendering JCheckBoxes within a JList and customizes their appearance and behavior.
+ * This class is used in the Manager_GUI class to render the checkboxes for the ingredients in the menu item
+ * 
+ * @author Zak or Abhinav?
+ * @version 1.0
+ * @since Oct 3, 2023
+ */
 class CheckBoxListCellRenderer extends JCheckBox implements ListCellRenderer<JCheckBox> {
+    /**
+     * Returns a component that displays the specified value as a checkbox within a JList cell.
+     *
+     * @author Zak or Abhinav?
+     * @param list The JList that is requesting the rendering.
+     * @param value The value to be rendered as a checkbox.
+     * @param index The cell index being rendered.
+     * @param isSelected True if the cell is selected; otherwise, false.
+     * @param cellHasFocus True if the cell has focus; otherwise, false.
+     * @return The JCheckBox component representing the specified value for rendering.
+     */
     public Component getListCellRendererComponent(JList<? extends JCheckBox> list, 
     JCheckBox value, int index, boolean isSelected, boolean cellHasFocus) {
         setComponentOrientation(list.getComponentOrientation());

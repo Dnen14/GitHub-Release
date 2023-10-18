@@ -965,7 +965,7 @@ public class Manager_GUI extends JFrame {
  * This class allows rendering JCheckBoxes within a JList and customizes their appearance and behavior.
  * This class is used in the Manager_GUI class to render the checkboxes for the ingredients in the menu item
  * 
- * @author Zak or Abhinav?
+ * @author Zak Borman
  * @version 1.0
  * @since Oct 3, 2023
  */

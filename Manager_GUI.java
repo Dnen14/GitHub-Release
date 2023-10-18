@@ -104,6 +104,7 @@ public class Manager_GUI extends JFrame {
         addIngredientButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         updateIngredientButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         deleteIngredientButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+
         ingredientButtonPanel.add(restockButton);
         ingredientButtonPanel.add(Box.createVerticalStrut(10));
         ingredientButtonPanel.add(addIngredientButton);
@@ -585,7 +586,7 @@ public class Manager_GUI extends JFrame {
                     System.exit(0);
                 }
 
-                System.out.println("Opened database successfully");
+                //System.out.println("Opened database successfully");
 
                 try{
 
@@ -614,9 +615,6 @@ public class Manager_GUI extends JFrame {
 
 
                     // Create a pop-up window to display the sales report
-                    JFrame popupFrame = new JFrame("Sales Report in between" + startTime + " and " + endTime);
-                    popupFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
                     JPanel popupPanel = new JPanel(new BorderLayout());
 
                     // Create a JTable to display the results
@@ -648,10 +646,7 @@ public class Manager_GUI extends JFrame {
                     JScrollPane scrollPane = new JScrollPane(table);
                     popupPanel.add(scrollPane, BorderLayout.CENTER);
 
-                    popupFrame.add(popupPanel);
-                    popupFrame.pack();
-                    popupFrame.setVisible(true);
-                
+                    JOptionPane.showConfirmDialog(null, popupPanel, "Sales Report", JOptionPane.DEFAULT_OPTION);
                 }
                 catch(Exception e){
                     e.printStackTrace();
@@ -675,6 +670,8 @@ public class Manager_GUI extends JFrame {
                 // assuming no restocks have happened during the window
 
                 Connection connfunc = null;
+                HashMap<String, BigDecimal> currentIngredientCountMap = new HashMap<String, BigDecimal>();
+                HashMap<String, BigDecimal> ingredientsUsedMap = new HashMap<String, BigDecimal>();
 
                 try {
                     connfunc = DriverManager.getConnection(dbURL, username, password);
@@ -697,7 +694,6 @@ public class Manager_GUI extends JFrame {
                         menuIDs.add(new ArrayList<String>(Arrays.asList(database.getMultipleTableValues(stmt, "menu_item_order_join_table", "menuitemid", "orderid", orderIDs.get(i)))));
                     }
 
-                    HashMap<String, BigDecimal> ingredientsUsedMap = new HashMap<String, BigDecimal>();
                     for(int i = 0; i < ingredients.length; i++){
                         ingredientsUsedMap.put(ingredients[i], new BigDecimal("0.00"));
                     }
@@ -720,7 +716,6 @@ public class Manager_GUI extends JFrame {
                         }
                     }
 
-                    HashMap<String, BigDecimal> currentIngredientCountMap = new HashMap<String, BigDecimal>();
                     for(int i = 0; i < ingredients.length; i++){
                         String string = database.getOneTableValue(stmt, "ingredient", "quantity", "name", ingredients[i]);
                         BigDecimal currentInventoryValue = new BigDecimal(string);
@@ -742,6 +737,30 @@ public class Manager_GUI extends JFrame {
                 catch (Exception e) {
                     JOptionPane.showMessageDialog(null,"Connection NOT Closed.");
                 }
+                
+                JPanel panel = new JPanel();
+
+                DefaultTableModel menuModel = new DefaultTableModel(excessReportList.size(), 4);
+                menuModel.setColumnIdentifiers(new String[]{"Ingredient", "Amount Sold", "Inventory at Timestamp", "% Sold"});
+                
+                DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+                for (int i = 0; i < excessReportList.size(); ++i) {
+                    String ingredient = excessReportList.get(i);
+                    int sold = ingredientsUsedMap.get(ingredient).intValue();
+                    int oldInventory = currentIngredientCountMap.get(ingredient).intValue() + sold;
+                    double percentSold = (double) sold / oldInventory * 100;
+                    
+                    menuModel.setValueAt(ingredient, i, 0);
+                    menuModel.setValueAt(sold, i, 1);
+                    menuModel.setValueAt(oldInventory, i, 2);
+                    menuModel.setValueAt(decimalFormat.format(percentSold), i, 3);
+                }
+
+                JTable excessTable = new JTable(menuModel);
+                JScrollPane excessPane = new JScrollPane(excessTable);
+                panel.add(excessPane);
+
+                JOptionPane.showConfirmDialog(null, panel, "Excess Report", JOptionPane.DEFAULT_OPTION);
             }
         });
 

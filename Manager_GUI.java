@@ -933,9 +933,10 @@ public class Manager_GUI extends JFrame {
         switchToCashierGUIButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (cashierFrame == null) {
-                    cashierFrame = Cashier_GUI.createCashierFrame();
-                }
+                // if (cashierFrame == null) {
+                    
+                // }
+                cashierFrame = Cashier_GUI.createCashierFrame();
                 frame.dispose(); // Close the current frame
                 cashierFrame.setVisible(true); // Show the DB GUI frame
             }

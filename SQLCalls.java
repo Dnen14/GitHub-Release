@@ -26,7 +26,7 @@ public class SQLCalls{
      *
      * This method executes a SQL query to retrieve the column names of a specified database table.
      * It returns an array of strings containing the column names.
-     *
+     * @author Abhinav Nallam
      * @param stmt A Statement object for executing SQL queries.
      * @param table The name of the SQL table for which column names are to be retrieved.
      * @return An array of strings representing the column names of the specified table.
@@ -58,7 +58,7 @@ public class SQLCalls{
      *
      * This method executes a SQL query to retrieve values from a specific column of a given
      * database table. It returns an array of strings containing the values.
-     *
+     * @author Abhinav Nallam
      * @param stmt A Statement object for executing SQL queries.
      * @param table The name of the SQL table from which to retrieve values.
      * @param columnName The name of the column from which to retrieve values.
@@ -96,7 +96,7 @@ public class SQLCalls{
      *
      * This method executes a SQL query to retrieve a value from a specific column of a given
      * database table based on a specified condition. It returns the selected value as a string.
-     *
+     * @author Abhinav Nallam
      * @param stmt A Statement object for executing SQL queries.
      * @param table The name of the SQL table from which to retrieve the value.
      * @param columnName The name of the column from which to retrieve the value.
@@ -132,7 +132,7 @@ public class SQLCalls{
      *
      * This method executes a SQL query to retrieve multiple values from a specific column of a given
      * database table based on a specified condition. It returns the selected values as an array of strings.
-     *
+     * @author Abhinav Nallam
      * @param stmt A Statement object for executing SQL queries.
      * @param table The name of the SQL table from which to retrieve the values.
      * @param columnName The name of the column from which to retrieve the values.
@@ -173,7 +173,7 @@ public class SQLCalls{
      *
      * This method executes an SQL query to retrieve a list of order IDs from a database table
      * where the order date falls within the specified date range. The result is returned as an ArrayList of strings.
-     *
+     * @author Zak Borman
      * @param stmt A Statement object for executing SQL queries.
      * @param time1 The start date of the date range (formatted as a string, e.g., 'YYYY-MM-DD').
      * @param time2 The end date of the date range (formatted as a string, e.g., 'YYYY-MM-DD').
@@ -202,7 +202,7 @@ public class SQLCalls{
      *
      * This method executes an SQL query to retrieve all rows and columns from a specified database table.
      * The result is formatted and returned as an ArrayList of ArrayLists of strings, where each inner ArrayList represents a row of data.
-     *
+     * @author Abhinav Nallam
      * @param stmt A Statement object for executing SQL queries.
      * @param columnNames An array of column names for the table, used for formatting the results.
      * @param table The name of the database table to view.
@@ -241,7 +241,7 @@ public class SQLCalls{
      * Add an item to a specified database table.
      *
      * This method inserts a new row into a specified database table with the provided values.
-     *
+     * @author Abhinav Nallam
      * @param table The name of the database table where the item will be added.
      * @param stmt A Statement object for executing SQL queries.
      * @param values An array of objects representing the values to be added to the table.
@@ -284,7 +284,7 @@ public class SQLCalls{
      *
      * This method updates a database table by setting a new value for a specified column based on a condition
      * where another column has a particular value.
-     *
+     * @author Abhinav Nallam
      * @param stmt A Statement object for executing SQL queries.
      * @param value The new value to set in the specified column.
      * @param table The name of the database table to be updated.
@@ -325,7 +325,7 @@ public class SQLCalls{
      * Delete a row of data from a database table based on a specified condition.
      *
      * This method deletes a row of data from a database table where a specified column matches a given value.
-     *
+     * @author Abhinav Nallam
      * @param stmt A Statement object for executing SQL queries.
      * @param table The name of the database table from which to delete the row.
      * @param column The name of the column that should match the specified value for the deletion condition.
@@ -350,7 +350,7 @@ public class SQLCalls{
      * Check if a specified value exists in a database table based on a given condition.
      *
      * This method checks if a value exists in a database table by evaluating a condition on a specified column.
-     *
+     * @author Abhinav Nallam
      * @param stmt A Statement object for executing SQL queries.
      * @param table The name of the database table to perform the existence check.
      * @param returnedColumnName The name of the column whose value is returned as "TRUE" if the condition is met, or "FALSE" if it is not.
@@ -388,7 +388,7 @@ public class SQLCalls{
      *
      * This method retrieves the quantity of an ingredient in a menu item from a database table by evaluating two conditions:
      * ingredient_id and menu_item_id.
-     *
+     * @author Abhinav Nallam
      * @param stmt A Statement object for executing SQL queries.
      * @param ingredient_id The unique identifier of the ingredient.
      * @param menu_item_id The unique identifier of the menu item.

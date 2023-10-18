@@ -104,7 +104,7 @@ public class Cashier_GUI extends JFrame {
                 // Display the login panel and proceed if the credentials are valid
                 if (Manager_GUI.managerSecurity()) {
                     frame.dispose(); // Close the current frame
-                    managerFrame.setVisible(true); // Show the Manager GUI frame
+                    //managerFrame.setVisible(true); // Show the Manager GUI frame
                 }
             }
         });

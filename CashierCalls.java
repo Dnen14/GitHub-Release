@@ -211,7 +211,11 @@ public final class CashierCalls extends SQLCalls{
             Statement st = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             
             // make the query
-            ResultSet rs = st.executeQuery("SELECT MAX(id) as max_id FROM " + table);
+            String id_name = "id";
+            if(table == "ingredient_menu_item_join_table"){
+                id_name = "join_id";
+            }
+            ResultSet rs = st.executeQuery("SELECT MAX("+id_name+") as max_id FROM " + table);
 
             // get value from query
             if(rs.next()){

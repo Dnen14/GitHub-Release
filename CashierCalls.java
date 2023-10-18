@@ -2,6 +2,10 @@ import java.util.*;
 import java.sql.*;
 import java.time.*;
 
+/*
+    class that contains all of the necesarry function calls for the front end to populate the page
+    @author Brandon Thomas
+*/
 public final class CashierCalls extends SQLCalls{
     
     /**

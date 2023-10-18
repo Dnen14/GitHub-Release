@@ -517,8 +517,10 @@ public class Manager_GUI extends JFrame {
 
                     database.AddItem("menu_item", stmt, values);
 
+                    String menuItemID = database.getOneTableValue(stmt, "menu_item", "id", "name", menuItemField.getText());
+
                     for(int i = 0; i < selectedCheckboxesIDs.length; i++){
-                        Object[] inputVals = {CashierCalls.getNextMenuItemIngredientJoinId(), selectedCheckboxesIDs[i], menuItems.length};
+                        Object[] inputVals = {CashierCalls.getNextMenuItemIngredientJoinId(), selectedCheckboxesIDs[i], menuItemID};
                         database.AddItem("ingredient_menu_item_join_table", stmt, inputVals);
                     }
                 }
@@ -612,7 +614,7 @@ public class Manager_GUI extends JFrame {
                     Statement stmt = connfunc.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 
                     String menuItemID = database.getOneTableValue(stmt, "menu_item", "id", "name", (String) menuList.getSelectedValue());
-                    database.deleteItem(stmt, "ingredient_menu_item_join_table", "menu_item", menuItemID);
+                    database.deleteItem(stmt, "ingredient_menu_item_join_table", "menu_item_id", menuItemID);
                     database.deleteItem(stmt, "menu_item", "id", menuItemID);
 
                 }

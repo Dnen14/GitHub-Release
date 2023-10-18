@@ -75,8 +75,11 @@ public class Cashier_GUI extends JFrame {
                 if (managerFrame == null) {
                     managerFrame = Manager_GUI.createManagerFrame();
                 }
-                frame.dispose(); // Close the current frame
-                managerFrame.setVisible(true); // Show the DB GUI frame
+                // Display the login panel and proceed if the credentials are valid
+                if (Manager_GUI.managerSecurity()) {
+                    frame.dispose(); // Close the current frame
+                    managerFrame.setVisible(true); // Show the Manager GUI frame
+                }
             }
         });
 
@@ -219,7 +222,6 @@ public class Cashier_GUI extends JFrame {
         itemsList.addListSelectionListener(e -> {
             int selectedIndex = itemsList.getSelectedIndex();
             if (selectedIndex >= 0) {
-                MenuItem removedItem = orderListModel.getElementAt(selectedIndex);
                 orderListModel.remove(selectedIndex);
                 orderSummary.remove(selectedIndex);
                 updateOrderSummary();

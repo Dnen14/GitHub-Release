@@ -34,9 +34,66 @@ public class Manager_GUI extends JFrame {
 
 
     public static void main(String[] args) {
-        // Create the Manager POS System frame
-        managerFrame = createManagerFrame();
-        managerFrame.setVisible(true);    
+        managerSecurity();
+    }
+
+    public static boolean managerSecurity() {
+        while (true) {
+            JPanel panel = new JPanel();
+            JTextField nameField = new JTextField(10);
+            JPasswordField pinField = new JPasswordField(10);
+            panel.add(new JLabel("Name:"));
+            panel.add(nameField);
+            panel.add(new JLabel("PIN:"));
+            panel.add(pinField);
+    
+            int result = JOptionPane.showConfirmDialog(null, panel, "Enter Credentials", JOptionPane.OK_CANCEL_OPTION);
+            
+            if (result == JOptionPane.OK_OPTION) {
+                String inputName = nameField.getText();
+                String inputPin = new String(pinField.getPassword());
+    
+                if (verifyCredentials(inputName, inputPin)) {
+                    // Credentials are valid, create the Manager POS System frame
+                    managerFrame = createManagerFrame();
+                    managerFrame.setVisible(true);
+                    return true; // Exit the loop
+                } else {
+                    // Credentials are invalid, display an error message
+                    JOptionPane.showMessageDialog(null, "Invalid credentials. Try again.");
+                }
+            } else {
+                // The user canceled or closed the dialog, exit the loop
+                JOptionPane.showMessageDialog(null, "Access denied.");
+                return false; // Exit the loop
+            }
+        }
+    }
+
+    public static boolean verifyCredentials(String name, String pin) {
+        // Verify credentials against database
+        try {
+            Connection conn = DriverManager.getConnection(dbURL, username, password);
+            String query = "SELECT * FROM credentials WHERE name = ? AND pin = ?";
+            PreparedStatement pstmt = conn.prepareStatement(query);
+            pstmt.setString(1, name);
+            pstmt.setString(2, pin);
+    
+            ResultSet resultSet = pstmt.executeQuery();
+    
+            if (resultSet.next()) {
+                // Credentials are valid
+                conn.close();
+                return true;
+            }
+    
+            conn.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+            System.exit(0);
+        }
+        return false;
     }
 
     public static JFrame createManagerFrame() {    

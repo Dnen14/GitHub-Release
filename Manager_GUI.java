@@ -215,7 +215,7 @@ public class Manager_GUI extends JFrame {
         }
 
         // GUI Window
-        JFrame frame = new JFrame("DB GUI");
+        JFrame frame = new JFrame("Manager POS System");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1280, 720);
 

@@ -314,7 +314,7 @@ public final class CashierCalls extends SQLCalls{
             str_ingredients = s.ViewTable(st,new String[]{"id","_name","restock_price","quantity","threshold"},"ingredient");
         }
         catch (Exception e){
-            System.out.println("DB Querry Failed");
+            System.out.println("DB Query Failed");
             System.out.println(e.getClass().getName() + ": " + e.getMessage());
         }
         ArrayList<Ingredient> ingredients = new ArrayList<Ingredient>();
@@ -328,6 +328,7 @@ public final class CashierCalls extends SQLCalls{
                                                 str_ingredient.get(3),//name
                                                 Double.valueOf(str_ingredient.get(2)).doubleValue(),//price
                                                 Double.valueOf(str_ingredient.get(1)).doubleValue(),//quantity
+                                                Double.valueOf(str_ingredient.get(2)).doubleValue(),//price again (thanks brandon)
                                                 Double.valueOf(str_ingredient.get(4)).doubleValue());//threshold
 
                 ingredients.add(ing);
